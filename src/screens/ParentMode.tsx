@@ -1,23 +1,30 @@
 import { useState } from 'react'
 import type { AppData } from '../types'
+import type { ParentTab } from '../App'
 import { ParentKonfirmasi } from './parent/ParentKonfirmasi'
 import { ParentTugas } from './parent/ParentTugas'
+import { ParentHadiah } from './parent/ParentHadiah'
 import { ParentSesuaikan } from './parent/ParentSesuaikan'
 import { ParentPengaturan } from './parent/ParentPengaturan'
-
-type Tab = 'konfirmasi' | 'tugas' | 'sesuaikan' | 'pengaturan'
 
 type Props = {
   data: AppData
   setData: (d: AppData) => void
+  initialTab?: ParentTab
   onExit: () => void
 }
 
-export function ParentMode({ data, setData, onExit }: Props) {
-  const [tab, setTab] = useState<Tab>('konfirmasi')
+export function ParentMode({
+  data,
+  setData,
+  initialTab = 'konfirmasi',
+  onExit,
+}: Props) {
+  const [tab, setTab] = useState<ParentTab>(initialTab)
   const pending =
     data.completions.filter((c) => c.status === 'menunggu').length +
-    data.proposals.filter((p) => p.status === 'menunggu').length
+    data.proposals.filter((p) => p.status === 'menunggu').length +
+    data.rewardClaims.filter((r) => r.status === 'menunggu').length
 
   return (
     <div className="screen">
@@ -42,6 +49,12 @@ export function ParentMode({ data, setData, onExit }: Props) {
           Tugas
         </button>
         <button
+          className={`tab ${tab === 'hadiah' ? 'active' : ''}`}
+          onClick={() => setTab('hadiah')}
+        >
+          Hadiah
+        </button>
+        <button
           className={`tab ${tab === 'sesuaikan' ? 'active' : ''}`}
           onClick={() => setTab('sesuaikan')}
         >
@@ -59,6 +72,7 @@ export function ParentMode({ data, setData, onExit }: Props) {
         <ParentKonfirmasi data={data} setData={setData} />
       )}
       {tab === 'tugas' && <ParentTugas data={data} setData={setData} />}
+      {tab === 'hadiah' && <ParentHadiah data={data} setData={setData} />}
       {tab === 'sesuaikan' && (
         <ParentSesuaikan data={data} setData={setData} />
       )}

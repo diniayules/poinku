@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { AppData, Adjustment } from '../../types'
 import { todayKey, uid } from '../../storage'
+import { EmojiOrImg } from '../../components/EmojiOrImg'
 
 type Props = {
   data: AppData
@@ -55,7 +56,7 @@ export function ParentSesuaikan({ data, setData }: Props) {
               className={`select-chip ${childId === c.id ? 'active' : ''}`}
               onClick={() => setChildId(c.id)}
             >
-              {c.avatar} {c.nama}{' '}
+              <EmojiOrImg value={c.avatar} imgSize={20} /> {c.nama}{' '}
               <span style={{ opacity: 0.7 }}>⭐{c.totalPoin}</span>
             </button>
           ))}

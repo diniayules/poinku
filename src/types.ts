@@ -5,6 +5,8 @@ export type Child = {
   totalPoin: number
 }
 
+export type Jadwal = 'setiap-hari' | 'hari-sekolah' | 'akhir-pekan'
+
 export type Task = {
   id: string
   childId: string
@@ -13,6 +15,7 @@ export type Task = {
   ikon: string
   jam?: string
   durasiMenit?: number
+  jadwal?: Jadwal
 }
 
 export type CompletionStatus = 'menunggu' | 'disetujui' | 'ditolak'
@@ -45,11 +48,46 @@ export type Proposal = {
   poin?: number
 }
 
+export type RewardTipe = 'harian' | 'mingguan' | 'bulanan'
+
+export type Reward = {
+  id: string
+  childId: string
+  judul: string
+  ikon: string
+  harga: number
+  tipe: RewardTipe
+}
+
+export type RewardClaimStatus = 'menunggu' | 'diberikan' | 'ditolak'
+
+export type RewardClaim = {
+  id: string
+  rewardId: string
+  childId: string
+  tipe: RewardTipe
+  periodKey: string
+  diklaimPada: string
+  hargaSaatItu: number
+  poinPeriodeSaatItu: number
+  status: RewardClaimStatus
+}
+
+export type Tema =
+  | 'luar-angkasa'
+  | 'hutan'
+  | 'bawah-laut'
+  | 'permen'
+  | 'ceria'
+
 export type AppData = {
   children: Child[]
   tasks: Task[]
   completions: Completion[]
   adjustments: Adjustment[]
   proposals: Proposal[]
+  rewards: Reward[]
+  rewardClaims: RewardClaim[]
   pinHash: string | null
+  tema: Tema
 }

@@ -1,4 +1,5 @@
-:root {
+:root,
+:root[data-tema='luar-angkasa'] {
   --space-deep: #0b0b2a;
   --space-mid: #1a1452;
   --space-light: #2e1b7a;
@@ -11,6 +12,116 @@
   --success: #6bff9e;
   --danger: #ff6b8a;
   --gold: #ffd24d;
+  --bg-glow-1: rgba(155, 77, 255, 0.35);
+  --bg-glow-2: rgba(77, 208, 255, 0.25);
+  --bg-glow-3: rgba(255, 110, 199, 0.2);
+  --bg-base: linear-gradient(180deg, var(--space-deep) 0%, var(--space-mid) 100%);
+  --planet-color-1: #ffb366;
+  --planet-color-2: #66ffd2;
+  --planet-color-3: #ffd24d;
+  --planet-color-4: #ff9ed6;
+  --planet-color-5: #b5ff66;
+  --planet-color-6: #ff8866;
+}
+
+:root[data-tema='hutan'] {
+  --space-deep: #0d2a14;
+  --space-mid: #1a3d22;
+  --space-light: #2d5a35;
+  --nebula-pink: #ffa94d;
+  --nebula-purple: #6bff9e;
+  --nebula-cyan: #ffd24d;
+  --star: #fff8c2;
+  --text: #f1fff1;
+  --text-dim: #b8d4b8;
+  --success: #8eff6b;
+  --danger: #ff8866;
+  --gold: #ffd24d;
+  --bg-glow-1: rgba(107, 255, 158, 0.3);
+  --bg-glow-2: rgba(255, 210, 77, 0.2);
+  --bg-glow-3: rgba(255, 169, 77, 0.2);
+  --bg-base: linear-gradient(180deg, #0d2a14 0%, #1a3d22 100%);
+  --planet-color-1: #ffa94d;
+  --planet-color-2: #6bff9e;
+  --planet-color-3: #ffd24d;
+  --planet-color-4: #c0ff66;
+  --planet-color-5: #ff8866;
+  --planet-color-6: #b87333;
+}
+
+:root[data-tema='bawah-laut'] {
+  --space-deep: #061838;
+  --space-mid: #0d2a52;
+  --space-light: #154070;
+  --nebula-pink: #ff8a8a;
+  --nebula-purple: #4dd0ff;
+  --nebula-cyan: #66ffe0;
+  --star: #c8f0ff;
+  --text: #f1faff;
+  --text-dim: #a8c5db;
+  --success: #66ffe0;
+  --danger: #ff7a90;
+  --gold: #ffd24d;
+  --bg-glow-1: rgba(77, 208, 255, 0.35);
+  --bg-glow-2: rgba(102, 255, 224, 0.25);
+  --bg-glow-3: rgba(255, 138, 138, 0.18);
+  --bg-base: linear-gradient(180deg, #061838 0%, #0d2a52 100%);
+  --planet-color-1: #66ffe0;
+  --planet-color-2: #4dd0ff;
+  --planet-color-3: #ffa94d;
+  --planet-color-4: #ff8a8a;
+  --planet-color-5: #b5e8ff;
+  --planet-color-6: #ffd24d;
+}
+
+:root[data-tema='permen'] {
+  --space-deep: #4a1a4a;
+  --space-mid: #6e2868;
+  --space-light: #8e3a82;
+  --nebula-pink: #ff8ad0;
+  --nebula-purple: #c89aff;
+  --nebula-cyan: #88ffe0;
+  --star: #fff0c4;
+  --text: #fff5fa;
+  --text-dim: #e5c5dd;
+  --success: #88ffb3;
+  --danger: #ff7d97;
+  --gold: #ffd770;
+  --bg-glow-1: rgba(255, 138, 208, 0.4);
+  --bg-glow-2: rgba(200, 154, 255, 0.3);
+  --bg-glow-3: rgba(255, 215, 112, 0.25);
+  --bg-base: linear-gradient(180deg, #4a1a4a 0%, #6e2868 100%);
+  --planet-color-1: #ff8ad0;
+  --planet-color-2: #c89aff;
+  --planet-color-3: #ffd770;
+  --planet-color-4: #88ffe0;
+  --planet-color-5: #ff9b9b;
+  --planet-color-6: #ffb6e6;
+}
+
+:root[data-tema='ceria'] {
+  --space-deep: #fff8f0;
+  --space-mid: #ffeaf2;
+  --space-light: #ffffff;
+  --nebula-pink: #e84d8a;
+  --nebula-purple: #7f58af;
+  --nebula-cyan: #64c5eb;
+  --star: #feb326;
+  --text: #2a1a4a;
+  --text-dim: #6e5c8c;
+  --success: #4dc97a;
+  --danger: #e84d8a;
+  --gold: #feb326;
+  --bg-glow-1: rgba(232, 77, 138, 0.18);
+  --bg-glow-2: rgba(100, 197, 235, 0.22);
+  --bg-glow-3: rgba(254, 179, 38, 0.18);
+  --bg-base: linear-gradient(180deg, #ffffff 0%, #fff5f8 100%);
+  --planet-color-1: #feb326;
+  --planet-color-2: #64c5eb;
+  --planet-color-3: #e84d8a;
+  --planet-color-4: #7f58af;
+  --planet-color-5: #4dc97a;
+  --planet-color-6: #ffb6c1;
 
   --sans: 'Fredoka', 'Nunito', system-ui, sans-serif;
   --display: 'Orbitron', 'Fredoka', system-ui, sans-serif;
@@ -37,20 +148,13 @@ body,
 
 body {
   background:
-    radial-gradient(
-      ellipse at 20% 10%,
-      rgba(155, 77, 255, 0.35),
-      transparent 50%
-    ),
-    radial-gradient(
-      ellipse at 80% 85%,
-      rgba(77, 208, 255, 0.25),
-      transparent 55%
-    ),
-    radial-gradient(ellipse at 60% 40%, rgba(255, 110, 199, 0.2), transparent 60%),
-    linear-gradient(180deg, var(--space-deep) 0%, var(--space-mid) 100%);
+    radial-gradient(ellipse at 20% 10%, var(--bg-glow-1), transparent 50%),
+    radial-gradient(ellipse at 80% 85%, var(--bg-glow-2), transparent 55%),
+    radial-gradient(ellipse at 60% 40%, var(--bg-glow-3), transparent 60%),
+    var(--bg-base);
   background-attachment: fixed;
   overflow-x: hidden;
+  transition: background 0.5s ease;
 }
 
 body::before {
@@ -86,18 +190,40 @@ body::after {
   border-radius: 50%;
   background: radial-gradient(
     circle at 30% 30%,
-    #ffb366,
-    #ff6b9d 50%,
-    #6b3fff 100%
+    var(--planet-color-1),
+    var(--nebula-pink) 50%,
+    var(--nebula-purple) 100%
   );
   box-shadow:
-    0 0 60px rgba(255, 107, 157, 0.4),
+    0 0 60px rgba(0, 0, 0, 0.4),
     inset -20px -20px 40px rgba(0, 0, 0, 0.3);
   opacity: 0.55;
   animation: floatPlanet 14s ease-in-out infinite;
   pointer-events: none;
   z-index: 0;
   filter: blur(1px);
+}
+
+:root[data-tema='hutan'] body::before,
+:root[data-tema='bawah-laut'] body::before,
+:root[data-tema='permen'] body::before,
+:root[data-tema='ceria'] body::before {
+  display: none;
+}
+
+:root[data-tema='hutan'] body::after,
+:root[data-tema='permen'] body::after {
+  filter: blur(2px);
+}
+
+:root[data-tema='ceria'] body::after {
+  opacity: 0.35;
+  filter: blur(2px);
+}
+
+:root[data-tema='ceria'] .floaters span {
+  opacity: 0.55;
+  filter: drop-shadow(0 4px 10px rgba(127, 88, 175, 0.25));
 }
 
 @keyframes twinkle {
@@ -343,4 +469,208 @@ input {
   border-radius: 20px;
   padding: 20px;
   backdrop-filter: blur(10px);
+}
+
+/* Tema ceria: surface override */
+:root[data-tema='ceria'] .card,
+:root[data-tema='ceria'] .row,
+:root[data-tema='ceria'] .input,
+:root[data-tema='ceria'] .tab,
+:root[data-tema='ceria'] .checkbox,
+:root[data-tema='ceria'] .icon-btn,
+:root[data-tema='ceria'] .back-btn,
+:root[data-tema='ceria'] .pin-pad button,
+:root[data-tema='ceria'] .emoji-picker button,
+:root[data-tema='ceria'] .select-chip,
+:root[data-tema='ceria'] .hadiah-progress,
+:root[data-tema='ceria'] .hadiah-item {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(127, 88, 175, 0.18);
+  color: var(--text);
+}
+
+:root[data-tema='ceria'] .input {
+  border-width: 2px;
+  border-color: rgba(127, 88, 175, 0.25);
+}
+
+:root[data-tema='ceria'] .input:focus {
+  border-color: var(--nebula-cyan);
+}
+
+:root[data-tema='ceria'] .pin-dot {
+  background: rgba(127, 88, 175, 0.18);
+}
+
+:root[data-tema='ceria'] .pin-dot.filled {
+  background: var(--nebula-cyan);
+  box-shadow: 0 0 12px var(--nebula-cyan);
+}
+
+:root[data-tema='ceria'] .tab.active {
+  background: rgba(232, 77, 138, 0.22);
+  border-color: var(--nebula-pink);
+  color: var(--text);
+}
+
+:root[data-tema='ceria'] .select-chip.active {
+  background: rgba(232, 77, 138, 0.22);
+  border-color: var(--nebula-pink);
+}
+
+:root[data-tema='ceria'] .task-item {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.85),
+    rgba(127, 88, 175, 0.08)
+  );
+  border-color: rgba(127, 88, 175, 0.2);
+  box-shadow: 0 6px 18px rgba(127, 88, 175, 0.1);
+}
+
+:root[data-tema='ceria'] .task-item.menunggu {
+  background: linear-gradient(
+    135deg,
+    rgba(254, 179, 38, 0.22),
+    rgba(232, 77, 138, 0.12)
+  );
+  border-color: rgba(254, 179, 38, 0.55);
+}
+
+:root[data-tema='ceria'] .task-item.disetujui {
+  background: linear-gradient(
+    135deg,
+    rgba(77, 201, 122, 0.2),
+    rgba(100, 197, 235, 0.15)
+  );
+  border-color: rgba(77, 201, 122, 0.5);
+}
+
+:root[data-tema='ceria'] .dash-header {
+  background: linear-gradient(
+    135deg,
+    rgba(127, 88, 175, 0.18),
+    rgba(100, 197, 235, 0.18),
+    rgba(232, 77, 138, 0.18)
+  );
+  border-color: rgba(127, 88, 175, 0.25);
+  box-shadow:
+    0 10px 30px rgba(127, 88, 175, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+:root[data-tema='ceria'] .parent-menu {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.97),
+    rgba(255, 245, 248, 0.97)
+  );
+  border-color: rgba(127, 88, 175, 0.3);
+}
+
+:root[data-tema='ceria'] .parent-menu-item {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(127, 88, 175, 0.15);
+}
+
+:root[data-tema='ceria'] .parent-menu-item:hover {
+  background: rgba(232, 77, 138, 0.12);
+}
+
+:root[data-tema='ceria'] .celebration-overlay {
+  background: rgba(255, 245, 248, 0.85);
+}
+
+:root[data-tema='ceria'] .celebration-modal {
+  background: linear-gradient(
+    135deg,
+    rgba(232, 77, 138, 0.25),
+    rgba(100, 197, 235, 0.22),
+    rgba(254, 179, 38, 0.28)
+  );
+  border-color: rgba(127, 88, 175, 0.4);
+}
+
+:root[data-tema='ceria'] .celebration-grup {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+:root[data-tema='ceria'] .celebration-reward {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.9),
+    rgba(254, 179, 38, 0.15)
+  );
+  border-color: rgba(127, 88, 175, 0.2);
+  color: var(--text);
+}
+
+:root[data-tema='ceria'] .suggest-list {
+  background: #fff;
+  border-color: rgba(100, 197, 235, 0.5);
+}
+
+:root[data-tema='ceria'] .suggest-hint {
+  background: rgba(100, 197, 235, 0.15);
+  color: var(--nebula-purple);
+}
+
+:root[data-tema='ceria'] .suggest-item:hover {
+  background: rgba(232, 77, 138, 0.12);
+}
+
+:root[data-tema='ceria'] .row-claim,
+:root[data-tema='ceria'] .row-usul {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+:root[data-tema='ceria'] .badge-hari {
+  background: linear-gradient(
+    135deg,
+    rgba(100, 197, 235, 0.25),
+    rgba(127, 88, 175, 0.2)
+  );
+  border-color: rgba(100, 197, 235, 0.5);
+}
+
+:root[data-tema='ceria'] .hadiah-gate {
+  background: linear-gradient(
+    135deg,
+    rgba(254, 179, 38, 0.2),
+    rgba(232, 77, 138, 0.12)
+  );
+  border-color: rgba(254, 179, 38, 0.6);
+}
+
+:root[data-tema='ceria'] .empty-state,
+:root[data-tema='ceria'] .meta {
+  color: var(--text-dim);
+}
+
+:root[data-tema='ceria'] .parent-fab {
+  background: radial-gradient(
+    circle at 30% 30%,
+    #feb326,
+    #e84d8a 50%,
+    #7f58af 100%
+  );
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 10px 30px rgba(232, 77, 138, 0.4),
+    inset -6px -8px 16px rgba(0, 0, 0, 0.2);
+}
+
+:root[data-tema='ceria'] .upload-tile {
+  background: linear-gradient(
+    135deg,
+    rgba(232, 77, 138, 0.15),
+    rgba(127, 88, 175, 0.12)
+  );
+  border-color: rgba(232, 77, 138, 0.5);
+}
+
+:root[data-tema='ceria'] h1,
+:root[data-tema='ceria'] h2,
+:root[data-tema='ceria'] h3 {
+  text-shadow: none;
 }

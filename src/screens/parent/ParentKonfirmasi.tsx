@@ -1,6 +1,12 @@
 import { useState } from 'react'
 import type { AppData } from '../../types'
-import { formatJam, hitungLewat } from '../../storage'
+import {
+  REWARD_TIPE_ICON,
+  REWARD_TIPE_LABEL,
+  formatJam,
+  hitungLewat,
+} from '../../storage'
+import { EmojiOrImg } from '../../components/EmojiOrImg'
 
 type Props = {
   data: AppData
@@ -12,6 +18,7 @@ export function ParentKonfirmasi({ data, setData }: Props) {
     (c) => c.status === 'menunggu',
   )
   const pendingProposals = data.proposals.filter((p) => p.status === 'menunggu')
+  const pendingClaims = data.rewardClaims.filter((c) => c.status === 'menunggu')
 
   const [poinUsul, setPoinUsul] = useState<Record<string, number>>({})
 
@@ -70,10 +77,26 @@ export function ParentKonfirmasi({ data, setData }: Props) {
     })
   }
 
-  if (pendingCompletions.length === 0 && pendingProposals.length === 0) {
+  function handleClaim(claimId: string, approve: boolean) {
+    const rewardClaims = data.rewardClaims.map((c) =>
+      c.id === claimId
+        ? {
+            ...c,
+            status: approve ? ('diberikan' as const) : ('ditolak' as const),
+          }
+        : c,
+    )
+    setData({ ...data, rewardClaims })
+  }
+
+  if (
+    pendingCompletions.length === 0 &&
+    pendingProposals.length === 0 &&
+    pendingClaims.length === 0
+  ) {
     return (
       <div className="empty-state">
-        Tidak ada tugas yang menunggu konfirmasi 🎉
+        Tidak ada yang menunggu konfirmasi 🎉
       </div>
     )
   }
@@ -88,10 +111,13 @@ export function ParentKonfirmasi({ data, setData }: Props) {
         const jamSelesai = formatJam(c.selesaiPada)
         return (
           <div key={c.id} className="row">
-            <span className="avatar">{child.avatar}</span>
+            <span className="avatar" style={{ fontSize: 28 }}>
+              <EmojiOrImg value={child.avatar} imgSize={36} />
+            </span>
             <div className="main">
               <div className="title-text">
-                {task.ikon} {task.judul}
+                <EmojiOrImg value={task.ikon} imgSize={22} imgRadius={6} />{' '}
+                {task.judul}
               </div>
               <div className="meta">
                 {child.nama} · +{task.poin} poin
@@ -126,13 +152,57 @@ export function ParentKonfirmasi({ data, setData }: Props) {
         )
       })}
 
+      {pendingClaims.map((c) => {
+        const reward = data.rewards.find((r) => r.id === c.rewardId)
+        const child = data.children.find((ch) => ch.id === c.childId)
+        if (!reward || !child) return null
+        return (
+          <div key={c.id} className="row row-claim">
+            <span className="avatar" style={{ fontSize: 28 }}>
+              <EmojiOrImg value={child.avatar} imgSize={36} />
+            </span>
+            <div className="main">
+              <div className="title-text">
+                <span className="badge-claim">Klaim Hadiah</span> {reward.ikon}{' '}
+                {reward.judul}
+              </div>
+              <div className="meta">
+                {child.nama} · {REWARD_TIPE_ICON[reward.tipe]}{' '}
+                {REWARD_TIPE_LABEL[reward.tipe]} · {c.hargaSaatItu} poin
+              </div>
+              <div className="meta" style={{ marginTop: 4 }}>
+                Diklaim pukul {formatJam(c.diklaimPada)} · poin{' '}
+                {REWARD_TIPE_LABEL[reward.tipe].toLowerCase()} saat itu:{' '}
+                <strong>{c.poinPeriodeSaatItu}</strong>
+              </div>
+            </div>
+            <div className="row-actions">
+              <button
+                className="icon-btn approve"
+                onClick={() => handleClaim(c.id, true)}
+              >
+                ✓ Berikan
+              </button>
+              <button
+                className="icon-btn reject"
+                onClick={() => handleClaim(c.id, false)}
+              >
+                ✗ Tolak
+              </button>
+            </div>
+          </div>
+        )
+      })}
+
       {pendingProposals.map((p) => {
         const child = data.children.find((ch) => ch.id === p.childId)
         if (!child) return null
         const poin = poinUsul[p.id] ?? 0
         return (
           <div key={p.id} className="row row-usul">
-            <span className="avatar">{child.avatar}</span>
+            <span className="avatar" style={{ fontSize: 28 }}>
+              <EmojiOrImg value={child.avatar} imgSize={36} />
+            </span>
             <div className="main">
               <div className="title-text">
                 <span className="badge-usul">Usulan</span> ✨ {p.judul}

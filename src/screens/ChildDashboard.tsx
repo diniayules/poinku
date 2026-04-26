@@ -1,6 +1,9 @@
 import { useState } from 'react'
-import { todayKey, uid } from '../storage'
+import { isWeekend, taskBerlakuHariIni, todayKey, uid } from '../storage'
 import type { AppData, Completion, Proposal } from '../types'
+import { HadiahSection } from '../components/HadiahSection'
+import { RewardCelebration } from '../components/RewardCelebration'
+import { EmojiOrImg } from '../components/EmojiOrImg'
 
 type Props = {
   data: AppData
@@ -17,8 +20,10 @@ export function ChildDashboard({ data, childId, setData, onBack }: Props) {
   if (!child) return null
 
   const today = todayKey()
+  const now = new Date()
+  const weekendNow = isWeekend(now)
   const tasks = data.tasks
-    .filter((t) => t.childId === childId)
+    .filter((t) => t.childId === childId && taskBerlakuHariIni(t, now))
     .slice()
     .sort((a, b) => {
       if (a.jam && b.jam) return a.jam.localeCompare(b.jam)
@@ -85,14 +90,21 @@ export function ChildDashboard({ data, childId, setData, onBack }: Props) {
       </button>
 
       <div className="dash-header">
-        <span className="avatar">{child.avatar}</span>
+        <span className="avatar">
+          <EmojiOrImg value={child.avatar} imgSize={88} />
+        </span>
         <div className="info">
           <h2>{child.nama}</h2>
           <div className="poin-total">⭐ {child.totalPoin}</div>
         </div>
       </div>
 
-      <h3 className="dash-section-title">Tugas Hari Ini</h3>
+      <h3 className="dash-section-title">
+        Tugas Hari Ini
+        <span className="badge-hari">
+          {weekendNow ? '🏖️ Akhir Pekan' : '🎒 Hari Sekolah'}
+        </span>
+      </h3>
       <div className="task-list">
         {tasks.length === 0 && proposalsHariIni.length === 0 && (
           <div className="empty-state">
@@ -120,7 +132,9 @@ export function ChildDashboard({ data, childId, setData, onBack }: Props) {
               </span>
               <span className="task-body">
                 <span className="judul-row">
-                  <span className="ikon">{t.ikon}</span>
+                  <span className="ikon">
+                    <EmojiOrImg value={t.ikon} imgSize={36} imgRadius={10} />
+                  </span>
                   <span className="judul-teks">{t.judul}</span>
                   {!status && <span className="poin-badge">+{t.poin}</span>}
                 </span>
@@ -225,6 +239,9 @@ export function ChildDashboard({ data, childId, setData, onBack }: Props) {
           </div>
         </div>
       )}
+
+      <HadiahSection data={data} childId={childId} setData={setData} />
+      <RewardCelebration data={data} childId={childId} setData={setData} />
     </div>
   )
 }

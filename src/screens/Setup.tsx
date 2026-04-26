@@ -3,6 +3,7 @@ import { hashPin, uid } from '../storage'
 import type { AppData } from '../types'
 import { AVATAR_EMOJIS } from '../constants'
 import { PinPad } from '../components/PinPad'
+import { EmojiPickerWithUpload } from '../components/EmojiPickerWithUpload'
 
 type Props = {
   data: AppData
@@ -134,19 +135,12 @@ export function Setup({ data, onFinish }: Props) {
         />
       </div>
       <div>
-        <div className="label">Avatar</div>
-        <div className="emoji-picker">
-          {AVATAR_EMOJIS.map((e) => (
-            <button
-              key={e}
-              type="button"
-              className={avatar === e ? 'active' : ''}
-              onClick={() => setAvatar(e)}
-            >
-              {e}
-            </button>
-          ))}
-        </div>
+        <div className="label">Avatar (foto atau pilih emoji)</div>
+        <EmojiPickerWithUpload
+          emojis={AVATAR_EMOJIS}
+          value={avatar}
+          onChange={setAvatar}
+        />
       </div>
       <button
         className="btn"
