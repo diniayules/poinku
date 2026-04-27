@@ -44,6 +44,41 @@ export function ParentTugas({ data, setData }: Props) {
   const [durasi, setDurasi] = useState<number | ''>('')
   const [jadwal, setJadwal] = useState<Jadwal>('setiap-hari')
   const [showSuggest, setShowSuggest] = useState(false)
+  const [selectMode, setSelectMode] = useState(false)
+  const [selected, setSelected] = useState<Set<string>>(new Set())
+
+  function toggleSelect(id: string) {
+    setSelected((s) => {
+      const next = new Set(s)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  function exitSelect() {
+    setSelectMode(false)
+    setSelected(new Set())
+  }
+
+  async function bulkDelete() {
+    if (selected.size === 0) return
+    const ok = await dialog.confirm({
+      title: t('dialogConfirmTitle'),
+      message: t('confirmBulkDelete', { n: selected.size }),
+      emoji: '🗑️',
+      variant: 'danger',
+      confirmText: t('delete'),
+      cancelText: t('cancel'),
+    })
+    if (!ok) return
+    setData({
+      ...data,
+      tasks: data.tasks.filter((tk) => !selected.has(tk.id)),
+    })
+    if (editId && selected.has(editId)) resetForm()
+    exitSelect()
+  }
 
   const suggestions =
     !editId && judul.trim().length >= 2
@@ -316,42 +351,120 @@ export function ParentTugas({ data, setData }: Props) {
       </div>
 
       <div>
-        <div className="label">{t('taskListLabel')}</div>
-        <div className="task-list">
-          {tasksForChild.length === 0 && (
-            <div className="empty-state">{t('noTasks')}</div>
-          )}
-          {tasksForChild.map((tk) => (
-            <div key={tk.id} className="row">
-              <span className="ikon" style={{ fontSize: 28 }}>
-                <EmojiOrImg value={tk.ikon} imgSize={36} imgRadius={10} />
-              </span>
-              <div className="main">
-                <div className="title-text">{tk.judul}</div>
-                <div className="meta">
-                  {JADWAL_ICON[tk.jadwal ?? 'setiap-hari']}{' '}
-                  {t(JADWAL_DICT_KEY[tk.jadwal ?? 'setiap-hari'])}
-                  {tk.jam ? ` · 🕐 ${tk.jam}` : ''}
-                  {tk.durasiMenit
-                    ? ` · ⏱️ ${tk.durasiMenit} ${t('minutesShort')}`
-                    : ''}
-                  {' · '}+{tk.poin} {t('pointsShort')}
+        {(() => {
+          const allIds = tasksForChild.map((tk) => tk.id)
+          const allSelected =
+            allIds.length > 0 && allIds.every((id) => selected.has(id))
+          return (
+            <>
+              <div className="list-toolbar">
+                <div className="label" style={{ margin: 0 }}>
+                  {t('taskListLabel')}
                 </div>
+                {!selectMode && tasksForChild.length > 0 && (
+                  <button
+                    className="select-btn"
+                    onClick={() => setSelectMode(true)}
+                  >
+                    {t('selectMode')}
+                  </button>
+                )}
               </div>
-              <div className="row-actions">
-                <button className="icon-btn" onClick={() => startEdit(tk)}>
-                  {t('edit')}
-                </button>
-                <button
-                  className="icon-btn reject"
-                  onClick={() => hapus(tk.id)}
-                >
-                  {t('delete')}
-                </button>
+
+              {selectMode && (
+                <div className="select-toolbar">
+                  <span className="select-count">
+                    {t('selectedN', { n: selected.size })}
+                  </span>
+                  <button
+                    className="select-btn"
+                    onClick={() =>
+                      setSelected(allSelected ? new Set() : new Set(allIds))
+                    }
+                  >
+                    {allSelected ? t('unselectAll') : t('selectAll')}
+                  </button>
+                  <span className="spacer" />
+                  <button
+                    className="icon-btn reject"
+                    disabled={selected.size === 0}
+                    style={{ opacity: selected.size === 0 ? 0.5 : 1 }}
+                    onClick={bulkDelete}
+                  >
+                    🗑️ {t('delete')}
+                  </button>
+                  <button className="icon-btn" onClick={exitSelect}>
+                    {t('exitSelect')}
+                  </button>
+                </div>
+              )}
+
+              <div className="task-list">
+                {tasksForChild.length === 0 && (
+                  <div className="empty-state">{t('noTasks')}</div>
+                )}
+                {tasksForChild.map((tk) => {
+                  const isSel = selected.has(tk.id)
+                  return (
+                    <div
+                      key={tk.id}
+                      className={`row ${selectMode ? 'selectable' : ''} ${
+                        isSel ? 'selected' : ''
+                      }`}
+                      onClick={
+                        selectMode ? () => toggleSelect(tk.id) : undefined
+                      }
+                    >
+                      {selectMode && (
+                        <span
+                          className={`row-check ${isSel ? 'checked' : ''}`}
+                          aria-hidden="true"
+                        >
+                          {isSel && <span className="check">✓</span>}
+                        </span>
+                      )}
+                      <span className="ikon" style={{ fontSize: 28 }}>
+                        <EmojiOrImg
+                          value={tk.ikon}
+                          imgSize={36}
+                          imgRadius={10}
+                        />
+                      </span>
+                      <div className="main">
+                        <div className="title-text">{tk.judul}</div>
+                        <div className="meta">
+                          {JADWAL_ICON[tk.jadwal ?? 'setiap-hari']}{' '}
+                          {t(JADWAL_DICT_KEY[tk.jadwal ?? 'setiap-hari'])}
+                          {tk.jam ? ` · 🕐 ${tk.jam}` : ''}
+                          {tk.durasiMenit
+                            ? ` · ⏱️ ${tk.durasiMenit} ${t('minutesShort')}`
+                            : ''}
+                          {' · '}+{tk.poin} {t('pointsShort')}
+                        </div>
+                      </div>
+                      {!selectMode && (
+                        <div className="row-actions">
+                          <button
+                            className="icon-btn"
+                            onClick={() => startEdit(tk)}
+                          >
+                            {t('edit')}
+                          </button>
+                          <button
+                            className="icon-btn reject"
+                            onClick={() => hapus(tk.id)}
+                          >
+                            {t('delete')}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
-            </div>
-          ))}
-        </div>
+            </>
+          )
+        })()}
       </div>
     </div>
   )

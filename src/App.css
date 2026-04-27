@@ -1652,6 +1652,110 @@
   flex-shrink: 0;
 }
 
+/* Multi-select */
+.select-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: linear-gradient(
+    135deg,
+    rgba(155, 77, 255, 0.18),
+    rgba(77, 208, 255, 0.12)
+  );
+  border: 1px solid rgba(155, 77, 255, 0.35);
+  border-radius: 14px;
+  flex-wrap: wrap;
+}
+
+.select-toolbar .select-count {
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.select-toolbar .spacer {
+  flex: 1;
+}
+
+.list-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.list-toolbar .select-btn {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+:root[data-tema='ceria'] .list-toolbar .select-btn {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(127, 88, 175, 0.25);
+}
+
+.row.selectable {
+  cursor: pointer;
+  position: relative;
+}
+
+.row.selectable.selected {
+  background: linear-gradient(
+    135deg,
+    rgba(77, 208, 255, 0.22),
+    rgba(155, 77, 255, 0.18)
+  );
+  border-color: var(--nebula-cyan);
+  box-shadow: 0 0 18px rgba(77, 208, 255, 0.3);
+}
+
+:root[data-tema='ceria'] .row.selectable.selected {
+  background: linear-gradient(
+    135deg,
+    rgba(100, 197, 235, 0.25),
+    rgba(127, 88, 175, 0.15)
+  );
+  border-color: var(--nebula-cyan);
+}
+
+.row .row-check {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.row .row-check.checked {
+  background: linear-gradient(135deg, var(--nebula-cyan), var(--nebula-purple));
+  border-color: var(--nebula-cyan);
+  box-shadow: 0 0 12px rgba(77, 208, 255, 0.5);
+}
+
+.row .row-check .check {
+  color: #fff;
+  font-weight: 900;
+  font-size: 18px;
+  line-height: 1;
+}
+
+:root[data-tema='ceria'] .row .row-check {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(127, 88, 175, 0.3);
+}
+
 /* Dialog (confirm / alert) */
 .dialog-overlay {
   position: fixed;

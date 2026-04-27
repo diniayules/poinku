@@ -42,6 +42,41 @@ export function ParentHadiah({ data, setData }: Props) {
   const [ikon, setIkon] = useState(REWARD_ICONS[0])
   const [tipe, setTipe] = useState<RewardTipe>('harian')
   const [showSuggest, setShowSuggest] = useState(false)
+  const [selectMode, setSelectMode] = useState(false)
+  const [selected, setSelected] = useState<Set<string>>(new Set())
+
+  function toggleSelect(id: string) {
+    setSelected((s) => {
+      const next = new Set(s)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  function exitSelect() {
+    setSelectMode(false)
+    setSelected(new Set())
+  }
+
+  async function bulkDelete() {
+    if (selected.size === 0) return
+    const ok = await dialog.confirm({
+      title: t('dialogConfirmTitle'),
+      message: t('confirmBulkDelete', { n: selected.size }),
+      emoji: '🗑️',
+      variant: 'danger',
+      confirmText: t('delete'),
+      cancelText: t('cancel'),
+    })
+    if (!ok) return
+    setData({
+      ...data,
+      rewards: data.rewards.filter((r) => !selected.has(r.id)),
+    })
+    if (editId && selected.has(editId)) resetForm()
+    exitSelect()
+  }
 
   const suggestions =
     !editId && judul.trim().length >= 2
@@ -271,38 +306,116 @@ export function ParentHadiah({ data, setData }: Props) {
       </div>
 
       <div>
-        <div className="label">{t('rewardListLabel')}</div>
-        <div className="task-list">
-          {rewardsForChild.length === 0 && (
-            <div className="empty-state">{t('noRewards')}</div>
-          )}
-          {rewardsForChild.map((r) => (
-            <div key={r.id} className="row">
-              <span style={{ fontSize: 28 }}>
-                <EmojiOrImg value={r.ikon} imgSize={36} imgRadius={10} />
-              </span>
-              <div className="main">
-                <div className="title-text">{r.judul}</div>
-                <div className="meta">
-                  {REWARD_TIPE_ICON[r.tipe]}{' '}
-                  {t(REWARD_TIPE_DICT_KEY[r.tipe])} · {r.harga}{' '}
-                  {t('pointsShort')}
+        {(() => {
+          const allIds = rewardsForChild.map((r) => r.id)
+          const allSelected =
+            allIds.length > 0 && allIds.every((id) => selected.has(id))
+          return (
+            <>
+              <div className="list-toolbar">
+                <div className="label" style={{ margin: 0 }}>
+                  {t('rewardListLabel')}
                 </div>
+                {!selectMode && rewardsForChild.length > 0 && (
+                  <button
+                    className="select-btn"
+                    onClick={() => setSelectMode(true)}
+                  >
+                    {t('selectMode')}
+                  </button>
+                )}
               </div>
-              <div className="row-actions">
-                <button className="icon-btn" onClick={() => startEdit(r)}>
-                  {t('edit')}
-                </button>
-                <button
-                  className="icon-btn reject"
-                  onClick={() => hapus(r.id)}
-                >
-                  {t('delete')}
-                </button>
+
+              {selectMode && (
+                <div className="select-toolbar">
+                  <span className="select-count">
+                    {t('selectedN', { n: selected.size })}
+                  </span>
+                  <button
+                    className="select-btn"
+                    onClick={() =>
+                      setSelected(allSelected ? new Set() : new Set(allIds))
+                    }
+                  >
+                    {allSelected ? t('unselectAll') : t('selectAll')}
+                  </button>
+                  <span className="spacer" />
+                  <button
+                    className="icon-btn reject"
+                    disabled={selected.size === 0}
+                    style={{ opacity: selected.size === 0 ? 0.5 : 1 }}
+                    onClick={bulkDelete}
+                  >
+                    🗑️ {t('delete')}
+                  </button>
+                  <button className="icon-btn" onClick={exitSelect}>
+                    {t('exitSelect')}
+                  </button>
+                </div>
+              )}
+
+              <div className="task-list">
+                {rewardsForChild.length === 0 && (
+                  <div className="empty-state">{t('noRewards')}</div>
+                )}
+                {rewardsForChild.map((r) => {
+                  const isSel = selected.has(r.id)
+                  return (
+                    <div
+                      key={r.id}
+                      className={`row ${selectMode ? 'selectable' : ''} ${
+                        isSel ? 'selected' : ''
+                      }`}
+                      onClick={
+                        selectMode ? () => toggleSelect(r.id) : undefined
+                      }
+                    >
+                      {selectMode && (
+                        <span
+                          className={`row-check ${isSel ? 'checked' : ''}`}
+                          aria-hidden="true"
+                        >
+                          {isSel && <span className="check">✓</span>}
+                        </span>
+                      )}
+                      <span style={{ fontSize: 28 }}>
+                        <EmojiOrImg
+                          value={r.ikon}
+                          imgSize={36}
+                          imgRadius={10}
+                        />
+                      </span>
+                      <div className="main">
+                        <div className="title-text">{r.judul}</div>
+                        <div className="meta">
+                          {REWARD_TIPE_ICON[r.tipe]}{' '}
+                          {t(REWARD_TIPE_DICT_KEY[r.tipe])} · {r.harga}{' '}
+                          {t('pointsShort')}
+                        </div>
+                      </div>
+                      {!selectMode && (
+                        <div className="row-actions">
+                          <button
+                            className="icon-btn"
+                            onClick={() => startEdit(r)}
+                          >
+                            {t('edit')}
+                          </button>
+                          <button
+                            className="icon-btn reject"
+                            onClick={() => hapus(r.id)}
+                          >
+                            {t('delete')}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
-            </div>
-          ))}
-        </div>
+            </>
+          )
+        })()}
       </div>
     </div>
   )

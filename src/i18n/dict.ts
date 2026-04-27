@@ -308,6 +308,21 @@ export const dict = {
   dialogErrorTitle: { id: 'Gagal', en: 'Failed' },
   ok: { id: 'OK', en: 'OK' },
 
+  // Multi-select
+  selectMode: { id: '✓ Pilih', en: '✓ Select' },
+  selectedN: { id: '{n} dipilih', en: '{n} selected' },
+  selectAll: { id: 'Pilih semua', en: 'Select all' },
+  unselectAll: { id: 'Lepas semua', en: 'Unselect all' },
+  exitSelect: { id: 'Selesai', en: 'Done' },
+  confirmBulkDelete: {
+    id: 'Hapus {n} item terpilih?',
+    en: 'Delete {n} selected items?',
+  },
+  confirmBulkDeleteAdjustment: {
+    id: 'Hapus {n} penyesuaian terpilih? Total poin akan dikembalikan.',
+    en: 'Delete {n} selected adjustments? Points will be reverted.',
+  },
+
   // Pengaturan
   themeLabel: { id: 'Tema', en: 'Theme' },
   languageLabel: { id: 'Bahasa / Language', en: 'Language / Bahasa' },

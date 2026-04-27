@@ -18,6 +18,8 @@ export function ParentSesuaikan({ data, setData }: Props) {
   const [jumlah, setJumlah] = useState(5)
   const [alasan, setAlasan] = useState('')
   const [pesan, setPesan] = useState('')
+  const [selectMode, setSelectMode] = useState(false)
+  const [selected, setSelected] = useState<Set<string>>(new Set())
 
   function simpan() {
     if (!childId || jumlah <= 0 || !alasan.trim()) return
@@ -45,6 +47,50 @@ export function ParentSesuaikan({ data, setData }: Props) {
         : t('subtractedFromChild', { n: jumlah }),
     )
     setTimeout(() => setPesan(''), 2500)
+  }
+
+  function toggleSelect(id: string) {
+    setSelected((s) => {
+      const next = new Set(s)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  function exitSelect() {
+    setSelectMode(false)
+    setSelected(new Set())
+  }
+
+  async function bulkDelete() {
+    if (selected.size === 0) return
+    const ok = await dialog.confirm({
+      title: t('dialogConfirmTitle'),
+      message: t('confirmBulkDeleteAdjustment', { n: selected.size }),
+      emoji: '🗑️',
+      variant: 'danger',
+      confirmText: t('delete'),
+      cancelText: t('cancel'),
+    })
+    if (!ok) return
+    const deltaByChild: Record<string, number> = {}
+    for (const a of data.adjustments) {
+      if (selected.has(a.id)) {
+        deltaByChild[a.childId] = (deltaByChild[a.childId] || 0) + a.poin
+      }
+    }
+    const children = data.children.map((c) =>
+      deltaByChild[c.id]
+        ? { ...c, totalPoin: c.totalPoin - deltaByChild[c.id] }
+        : c,
+    )
+    setData({
+      ...data,
+      adjustments: data.adjustments.filter((a) => !selected.has(a.id)),
+      children,
+    })
+    exitSelect()
   }
 
   async function hapusAdjustment(id: string) {
@@ -153,52 +199,130 @@ export function ParentSesuaikan({ data, setData }: Props) {
       </div>
 
       <div>
-        <div className="label">{t('recentAdjustments')}</div>
-        <div className="task-list">
-          {data.adjustments
+        {(() => {
+          const items = data.adjustments
             .filter((a) => a.childId === childId)
             .slice()
             .reverse()
             .slice(0, 10)
-            .map((a) => (
-              <div key={a.id} className="row">
-                <span
-                  className="avatar"
-                  style={{
-                    color: a.poin > 0 ? 'var(--success)' : 'var(--danger)',
-                    fontSize: 22,
-                  }}
-                >
-                  {a.poin > 0 ? '＋' : '−'}
-                </span>
-                <div className="main">
-                  <div className="title-text">{a.alasan}</div>
-                  <div className="meta">{a.tanggal}</div>
+          const allIds = items.map((a) => a.id)
+          const allSelected =
+            allIds.length > 0 && allIds.every((id) => selected.has(id))
+          return (
+            <>
+              <div className="list-toolbar">
+                <div className="label" style={{ margin: 0 }}>
+                  {t('recentAdjustments')}
                 </div>
-                <span
-                  className="poin-badge"
-                  style={{
-                    color: a.poin > 0 ? 'var(--success)' : 'var(--danger)',
-                    background:
-                      a.poin > 0
-                        ? 'rgba(107,255,158,0.15)'
-                        : 'rgba(255,107,138,0.15)',
-                  }}
-                >
-                  {a.poin > 0 ? `+${a.poin}` : a.poin}
-                </span>
-                <button
-                  className="icon-btn reject"
-                  onClick={() => hapusAdjustment(a.id)}
-                  aria-label={t('delete')}
-                >
-                  🗑️
-                </button>
+                {!selectMode && items.length > 0 && (
+                  <button
+                    className="select-btn"
+                    onClick={() => setSelectMode(true)}
+                  >
+                    {t('selectMode')}
+                  </button>
+                )}
               </div>
-            ))}
-          {data.adjustments.filter((a) => a.childId === childId).length ===
-            0 && <div className="empty-state">{t('noAdjustments')}</div>}
-        </div>
+
+              {selectMode && (
+                <div className="select-toolbar">
+                  <span className="select-count">
+                    {t('selectedN', { n: selected.size })}
+                  </span>
+                  <button
+                    className="select-btn"
+                    onClick={() =>
+                      setSelected(allSelected ? new Set() : new Set(allIds))
+                    }
+                  >
+                    {allSelected ? t('unselectAll') : t('selectAll')}
+                  </button>
+                  <span className="spacer" />
+                  <button
+                    className="icon-btn reject"
+                    disabled={selected.size === 0}
+                    style={{ opacity: selected.size === 0 ? 0.5 : 1 }}
+                    onClick={bulkDelete}
+                  >
+                    🗑️ {t('delete')}
+                  </button>
+                  <button className="icon-btn" onClick={exitSelect}>
+                    {t('exitSelect')}
+                  </button>
+                </div>
+              )}
+
+              <div className="task-list">
+                {items.map((a) => {
+                  const isSel = selected.has(a.id)
+                  return (
+                    <div
+                      key={a.id}
+                      className={`row ${selectMode ? 'selectable' : ''} ${
+                        isSel ? 'selected' : ''
+                      }`}
+                      onClick={
+                        selectMode ? () => toggleSelect(a.id) : undefined
+                      }
+                    >
+                      {selectMode && (
+                        <span
+                          className={`row-check ${isSel ? 'checked' : ''}`}
+                          aria-hidden="true"
+                        >
+                          {isSel && <span className="check">✓</span>}
+                        </span>
+                      )}
+                      <span
+                        className="avatar"
+                        style={{
+                          color:
+                            a.poin > 0
+                              ? 'var(--success)'
+                              : 'var(--danger)',
+                          fontSize: 22,
+                        }}
+                      >
+                        {a.poin > 0 ? '＋' : '−'}
+                      </span>
+                      <div className="main">
+                        <div className="title-text">{a.alasan}</div>
+                        <div className="meta">{a.tanggal}</div>
+                      </div>
+                      <span
+                        className="poin-badge"
+                        style={{
+                          color:
+                            a.poin > 0
+                              ? 'var(--success)'
+                              : 'var(--danger)',
+                          background:
+                            a.poin > 0
+                              ? 'rgba(107,255,158,0.15)'
+                              : 'rgba(255,107,138,0.15)',
+                        }}
+                      >
+                        {a.poin > 0 ? `+${a.poin}` : a.poin}
+                      </span>
+                      {!selectMode && (
+                        <button
+                          className="icon-btn reject"
+                          onClick={() => hapusAdjustment(a.id)}
+                          aria-label={t('delete')}
+                        >
+                          🗑️
+                        </button>
+                      )}
+                    </div>
+                  )
+                })}
+                {items.length === 0 && (
+                  <div className="empty-state">{t('noAdjustments')}</div>
+                )}
+              </div>
+            </>
+          )
+        })()}
       </div>
     </div>
   )
