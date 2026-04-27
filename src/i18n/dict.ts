@@ -302,7 +302,29 @@ export const dict = {
 
   // Pengaturan
   themeLabel: { id: 'Tema', en: 'Theme' },
-  languageLabel: { id: 'Bahasa', en: 'Language' },
+  languageLabel: { id: 'Bahasa / Language', en: 'Language / Bahasa' },
+  backupRestoreLabel: {
+    id: 'Cadangkan & Pulihkan Data',
+    en: 'Backup & Restore Data',
+  },
+  backupBtn: { id: '📤 Cadangkan Data', en: '📤 Backup Data' },
+  restoreBtn: { id: '📥 Pulihkan Data', en: '📥 Restore Data' },
+  backupHint: {
+    id: 'Simpan file backup ke Google Drive / iCloud / email — bisa dipulihkan di device lain atau saat reset.',
+    en: 'Save the backup file to Google Drive / iCloud / email — restorable on another device or after reset.',
+  },
+  restoreConfirm: {
+    id: 'Pulihkan data dari file ini? Semua data saat ini akan diganti — pastikan sudah backup dulu.',
+    en: 'Restore data from this file? All current data will be replaced — back up first if needed.',
+  },
+  restoreInvalid: {
+    id: 'File tidak valid atau bukan backup Petualangan Poin.',
+    en: 'Invalid file or not a Point Adventure backup.',
+  },
+  restoreDone: {
+    id: 'Data berhasil dipulihkan ✅',
+    en: 'Data restored ✅',
+  },
   childrenLabel: { id: 'Anak', en: 'Children' },
   addChild: { id: '+ Tambah Anak', en: '+ Add Child' },
   addChildTitle: { id: 'Tambah Anak Baru', en: 'Add New Child' },

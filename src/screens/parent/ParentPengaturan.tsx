@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import type { AppData, Bahasa, Child, Tema } from '../../types'
 import { hashPin, uid } from '../../storage'
 import { AVATAR_EMOJIS } from '../../constants'
@@ -8,6 +8,7 @@ import { EmojiOrImg } from '../../components/EmojiOrImg'
 import { TEMA_FLOATERS, TEMA_IKON, TEMA_OPSI } from '../../storage'
 import { LANG_FLAG, LANG_LABEL, LANG_OPSI, useT } from '../../i18n'
 import type { DictKey } from '../../i18n/dict'
+import { exportData, importData } from '../../lib/backup'
 
 const TEMA_LABEL_KEY: Record<Tema, DictKey> = {
   'luar-angkasa': 'temaLuarAngkasa',
@@ -115,6 +116,22 @@ export function ParentPengaturan({ data, setData }: Props) {
 
   function pilihBahasa(bahasa: Bahasa) {
     setData({ ...data, bahasa })
+  }
+
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  async function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    if (!confirm(t('restoreConfirm'))) return
+    try {
+      const restored = await importData(file)
+      setData(restored)
+      alert(t('restoreDone'))
+    } catch {
+      alert(t('restoreInvalid'))
+    }
   }
 
   return (
@@ -232,6 +249,34 @@ export function ParentPengaturan({ data, setData }: Props) {
             </div>
           </div>
         )}
+      </div>
+
+      <div>
+        <div className="label">{t('backupRestoreLabel')}</div>
+        <p className="usul-hint" style={{ marginBottom: 10 }}>
+          {t('backupHint')}
+        </p>
+        <div className="btn-row">
+          <button
+            className="btn btn-ghost"
+            onClick={() => exportData(data)}
+          >
+            {t('backupBtn')}
+          </button>
+          <button
+            className="btn btn-ghost"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {t('restoreBtn')}
+          </button>
+        </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="application/json,.json"
+          style={{ display: 'none' }}
+          onChange={handleImport}
+        />
       </div>
 
       <div>
