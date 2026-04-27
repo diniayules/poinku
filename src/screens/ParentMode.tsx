@@ -6,6 +6,7 @@ import { ParentTugas } from './parent/ParentTugas'
 import { ParentHadiah } from './parent/ParentHadiah'
 import { ParentSesuaikan } from './parent/ParentSesuaikan'
 import { ParentPengaturan } from './parent/ParentPengaturan'
+import { useT } from '../i18n'
 
 type Props = {
   data: AppData
@@ -20,6 +21,7 @@ export function ParentMode({
   initialTab = 'konfirmasi',
   onExit,
 }: Props) {
+  const t = useT()
   const [tab, setTab] = useState<ParentTab>(initialTab)
   const pending =
     data.completions.filter((c) => c.status === 'menunggu').length +
@@ -29,10 +31,10 @@ export function ParentMode({
   return (
     <div className="screen">
       <button className="back-btn" onClick={onExit}>
-        ← Keluar Mode Orang Tua
+        ← {t('exitParent')}
       </button>
       <h2 className="screen-title">
-        Mode Orang Tua <span className="emoji">🔒</span>
+        {t('parentMode')} <span className="emoji">🔒</span>
       </h2>
 
       <div className="tabs">
@@ -40,31 +42,31 @@ export function ParentMode({
           className={`tab ${tab === 'konfirmasi' ? 'active' : ''}`}
           onClick={() => setTab('konfirmasi')}
         >
-          Konfirmasi {pending > 0 && `(${pending})`}
+          {t('tabKonfirmasi')} {pending > 0 && `(${pending})`}
         </button>
         <button
           className={`tab ${tab === 'tugas' ? 'active' : ''}`}
           onClick={() => setTab('tugas')}
         >
-          Tugas
+          {t('tabTugas')}
         </button>
         <button
           className={`tab ${tab === 'hadiah' ? 'active' : ''}`}
           onClick={() => setTab('hadiah')}
         >
-          Hadiah
+          {t('tabHadiah')}
         </button>
         <button
           className={`tab ${tab === 'sesuaikan' ? 'active' : ''}`}
           onClick={() => setTab('sesuaikan')}
         >
-          Sesuaikan Poin
+          {t('tabSesuaikan')}
         </button>
         <button
           className={`tab ${tab === 'pengaturan' ? 'active' : ''}`}
           onClick={() => setTab('pengaturan')}
         >
-          Pengaturan
+          {t('tabPengaturan')}
         </button>
       </div>
 

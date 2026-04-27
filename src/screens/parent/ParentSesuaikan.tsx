@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { AppData, Adjustment } from '../../types'
 import { todayKey, uid } from '../../storage'
 import { EmojiOrImg } from '../../components/EmojiOrImg'
+import { useT } from '../../i18n'
 
 type Props = {
   data: AppData
@@ -9,6 +10,7 @@ type Props = {
 }
 
 export function ParentSesuaikan({ data, setData }: Props) {
+  const t = useT()
   const [childId, setChildId] = useState<string>(data.children[0]?.id ?? '')
   const [tipe, setTipe] = useState<'plus' | 'minus'>('plus')
   const [jumlah, setJumlah] = useState(5)
@@ -37,8 +39,8 @@ export function ParentSesuaikan({ data, setData }: Props) {
     setJumlah(5)
     setPesan(
       tipe === 'plus'
-        ? `✨ +${jumlah} poin ditambahkan`
-        : `⚠️ -${jumlah} poin dikurangi`,
+        ? t('addedToChild', { n: jumlah })
+        : t('subtractedFromChild', { n: jumlah }),
     )
     setTimeout(() => setPesan(''), 2500)
   }
@@ -48,7 +50,7 @@ export function ParentSesuaikan({ data, setData }: Props) {
   return (
     <div className="screen" style={{ gap: 16 }}>
       <div>
-        <div className="label">Untuk anak</div>
+        <div className="label">{t('forChild')}</div>
         <div className="select-chip-row">
           {data.children.map((c) => (
             <button
@@ -69,18 +71,18 @@ export function ParentSesuaikan({ data, setData }: Props) {
             className={`${tipe === 'plus' ? 'active plus' : ''}`}
             onClick={() => setTipe('plus')}
           >
-            + Tambah Poin
+            {t('addPoints')}
           </button>
           <button
             className={`${tipe === 'minus' ? 'active minus' : ''}`}
             onClick={() => setTipe('minus')}
           >
-            − Kurangi Poin
+            {t('subtractPoints')}
           </button>
         </div>
 
         <div>
-          <div className="label">Jumlah poin</div>
+          <div className="label">{t('pointAmount')}</div>
           <input
             className="input"
             type="number"
@@ -91,13 +93,13 @@ export function ParentSesuaikan({ data, setData }: Props) {
         </div>
 
         <div>
-          <div className="label">Alasan</div>
+          <div className="label">{t('reason')}</div>
           <input
             className="input"
             placeholder={
               tipe === 'plus'
-                ? 'Contoh: Bantu cuci piring'
-                : 'Contoh: Telat tidur'
+                ? t('reasonPlaceholderPlus')
+                : t('reasonPlaceholderMinus')
             }
             value={alasan}
             onChange={(e) => setAlasan(e.target.value)}
@@ -113,8 +115,8 @@ export function ParentSesuaikan({ data, setData }: Props) {
           onClick={simpan}
         >
           {tipe === 'plus'
-            ? `Tambah +${jumlah} ke ${child?.nama ?? ''}`
-            : `Kurangi -${jumlah} dari ${child?.nama ?? ''}`}
+            ? t('addPointsTo', { n: jumlah, nama: child?.nama ?? '' })
+            : t('subtractPointsFrom', { n: jumlah, nama: child?.nama ?? '' })}
         </button>
 
         {pesan && (
@@ -125,7 +127,7 @@ export function ParentSesuaikan({ data, setData }: Props) {
       </div>
 
       <div>
-        <div className="label">Riwayat penyesuaian (terbaru)</div>
+        <div className="label">{t('recentAdjustments')}</div>
         <div className="task-list">
           {data.adjustments
             .filter((a) => a.childId === childId)
@@ -162,7 +164,7 @@ export function ParentSesuaikan({ data, setData }: Props) {
               </div>
             ))}
           {data.adjustments.filter((a) => a.childId === childId).length ===
-            0 && <div className="empty-state">Belum ada penyesuaian</div>}
+            0 && <div className="empty-state">{t('noAdjustments')}</div>}
         </div>
       </div>
     </div>

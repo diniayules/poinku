@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import type { AppData, Reward, RewardTipe } from '../../types'
 import {
+  REWARD_TIPE_DICT_KEY,
   REWARD_TIPE_ICON,
-  REWARD_TIPE_LABEL,
   uid,
 } from '../../storage'
 import { REWARD_ICONS } from '../../constants'
 import { EmojiOrImg } from '../../components/EmojiOrImg'
+import { EmojiPickerWithUpload } from '../../components/EmojiPickerWithUpload'
+import { useT } from '../../i18n'
 
 const TIPE_OPSI: RewardTipe[] = ['harian', 'mingguan', 'bulanan']
 
@@ -28,6 +30,7 @@ type Props = {
 }
 
 export function ParentHadiah({ data, setData }: Props) {
+  const t = useT()
   const [childId, setChildId] = useState<string>(
     data.children[0]?.id ?? '',
   )
@@ -101,7 +104,7 @@ export function ParentHadiah({ data, setData }: Props) {
   }
 
   function hapus(id: string) {
-    if (!confirm('Hapus hadiah ini?')) return
+    if (!confirm(t('confirmDeleteReward'))) return
     setData({
       ...data,
       rewards: data.rewards.filter((r) => r.id !== id),
@@ -122,7 +125,7 @@ export function ParentHadiah({ data, setData }: Props) {
   return (
     <div className="screen" style={{ gap: 16 }}>
       <div>
-        <div className="label">Untuk anak</div>
+        <div className="label">{t('forChild')}</div>
         <div className="select-chip-row">
           {data.children.map((c) => (
             <button
@@ -141,12 +144,12 @@ export function ParentHadiah({ data, setData }: Props) {
 
       <div className="card form">
         <div className="label">
-          {editId ? 'Ubah Hadiah' : 'Tambah Hadiah'}
+          {editId ? t('editRewardTitle') : t('addRewardTitle')}
         </div>
         <div className="suggest-wrap">
           <input
             className="input"
-            placeholder="Contoh: Screen time 1 jam"
+            placeholder={t('rewardJudulPlaceholder')}
             value={judul}
             onChange={(e) => {
               setJudul(e.target.value)
@@ -159,9 +162,7 @@ export function ParentHadiah({ data, setData }: Props) {
           />
           {showSuggest && suggestions.length > 0 && (
             <div className="suggest-list">
-              <div className="suggest-hint">
-                Sudah pernah dibuat untuk anak lain — klik untuk menyalin
-              </div>
+              <div className="suggest-hint">{t('suggestHint')}</div>
               {suggestions.map((s) => {
                 const ownerChild = data.children.find(
                   (c) => c.id === s.childId,
@@ -174,16 +175,25 @@ export function ParentHadiah({ data, setData }: Props) {
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => applyFromReward(s)}
                   >
-                    <span className="suggest-ikon">{s.ikon}</span>
+                    <span className="suggest-ikon">
+                      <EmojiOrImg value={s.ikon} imgSize={26} imgRadius={8} />
+                    </span>
                     <span className="suggest-main">
                       <span className="suggest-judul">{s.judul}</span>
                       <span className="suggest-meta">
-                        {ownerChild
-                          ? `${ownerChild.avatar} ${ownerChild.nama} · `
-                          : ''}
-                        {REWARD_TIPE_ICON[s.tipe]} {REWARD_TIPE_LABEL[s.tipe]}
+                        {ownerChild && (
+                          <>
+                            <EmojiOrImg
+                              value={ownerChild.avatar}
+                              imgSize={14}
+                            />{' '}
+                            {ownerChild.nama} ·{' '}
+                          </>
+                        )}
+                        {REWARD_TIPE_ICON[s.tipe]}{' '}
+                        {t(REWARD_TIPE_DICT_KEY[s.tipe])}
                         {' · '}
-                        {s.harga} poin
+                        {s.harga} {t('pointsShort')}
                       </span>
                     </span>
                   </button>
@@ -195,7 +205,7 @@ export function ParentHadiah({ data, setData }: Props) {
 
         <div className="form-row">
           <div>
-            <div className="label">Harga (poin)</div>
+            <div className="label">{t('rewardHarga')}</div>
             <input
               className="input"
               type="number"
@@ -205,16 +215,16 @@ export function ParentHadiah({ data, setData }: Props) {
             />
           </div>
           <div>
-            <div className="label">Tipe</div>
+            <div className="label">{t('rewardTipe')}</div>
             <div className="select-chip-row">
-              {TIPE_OPSI.map((t) => (
+              {TIPE_OPSI.map((tp) => (
                 <button
-                  key={t}
+                  key={tp}
                   type="button"
-                  className={`select-chip ${tipe === t ? 'active' : ''}`}
-                  onClick={() => setTipe(t)}
+                  className={`select-chip ${tipe === tp ? 'active' : ''}`}
+                  onClick={() => setTipe(tp)}
                 >
-                  {REWARD_TIPE_ICON[t]} {REWARD_TIPE_LABEL[t]}
+                  {REWARD_TIPE_ICON[tp]} {t(REWARD_TIPE_DICT_KEY[tp])}
                 </button>
               ))}
             </div>
@@ -222,28 +232,19 @@ export function ParentHadiah({ data, setData }: Props) {
         </div>
 
         <div>
-          <div className="label">Ikon</div>
-          <div
-            className="emoji-picker"
-            style={{ gridTemplateColumns: 'repeat(9, 1fr)' }}
-          >
-            {REWARD_ICONS.map((i) => (
-              <button
-                key={i}
-                type="button"
-                className={ikon === i ? 'active' : ''}
-                onClick={() => setIkon(i)}
-              >
-                {i}
-              </button>
-            ))}
-          </div>
+          <div className="label">{t('taskIkon')}</div>
+          <EmojiPickerWithUpload
+            emojis={REWARD_ICONS}
+            value={ikon}
+            onChange={setIkon}
+            columns={9}
+          />
         </div>
 
         <div className="btn-row">
           {editId && (
             <button className="btn btn-ghost" onClick={resetForm}>
-              Batal
+              {t('cancel')}
             </button>
           )}
           <button
@@ -254,33 +255,39 @@ export function ParentHadiah({ data, setData }: Props) {
             }}
             onClick={save}
           >
-            {editId ? 'Simpan' : 'Tambah'}
+            {editId ? t('save') : t('add')}
           </button>
         </div>
       </div>
 
       <div>
-        <div className="label">Daftar hadiah</div>
+        <div className="label">{t('rewardListLabel')}</div>
         <div className="task-list">
           {rewardsForChild.length === 0 && (
-            <div className="empty-state">Belum ada hadiah</div>
+            <div className="empty-state">{t('noRewards')}</div>
           )}
           {rewardsForChild.map((r) => (
             <div key={r.id} className="row">
-              <span style={{ fontSize: 28 }}>{r.ikon}</span>
+              <span style={{ fontSize: 28 }}>
+                <EmojiOrImg value={r.ikon} imgSize={36} imgRadius={10} />
+              </span>
               <div className="main">
                 <div className="title-text">{r.judul}</div>
                 <div className="meta">
-                  {REWARD_TIPE_ICON[r.tipe]} {REWARD_TIPE_LABEL[r.tipe]} ·{' '}
-                  {r.harga} poin
+                  {REWARD_TIPE_ICON[r.tipe]}{' '}
+                  {t(REWARD_TIPE_DICT_KEY[r.tipe])} · {r.harga}{' '}
+                  {t('pointsShort')}
                 </div>
               </div>
               <div className="row-actions">
                 <button className="icon-btn" onClick={() => startEdit(r)}>
-                  Ubah
+                  {t('edit')}
                 </button>
-                <button className="icon-btn reject" onClick={() => hapus(r.id)}>
-                  Hapus
+                <button
+                  className="icon-btn reject"
+                  onClick={() => hapus(r.id)}
+                >
+                  {t('delete')}
                 </button>
               </div>
             </div>

@@ -1,13 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { AppData, Reward, RewardTipe } from '../types'
 import {
+  REWARD_TIPE_DICT_KEY,
   REWARD_TIPE_ICON,
-  REWARD_TIPE_LABEL,
   periodKey,
   poinDalamPeriode,
   semuaTugasHariIniSelesai,
   uid,
 } from '../storage'
+import { EmojiOrImg } from './EmojiOrImg'
+import { useT } from '../i18n'
 
 const TIPE_ORDER: RewardTipe[] = ['harian', 'mingguan', 'bulanan']
 
@@ -45,6 +47,7 @@ type EligibleGroup = {
 }
 
 export function RewardCelebration({ data, childId, setData }: Props) {
+  const t = useT()
   const [dismissed, setDismissed] = useState<DismissMap>(() => loadDismiss())
   const [closed, setClosed] = useState(false)
   const now = useMemo(() => new Date(), [])
@@ -145,19 +148,21 @@ export function RewardCelebration({ data, childId, setData }: Props) {
       >
         <div className="celebration-head">
           <div className="celebration-emoji">🎁</div>
-          <h2 className="celebration-title">HADIAH TERSEDIA!</h2>
-          <p className="celebration-sub">
-            Pilih satu hadiah untuk di-klaim. Orang tua akan konfirmasi dulu.
-          </p>
+          <h2 className="celebration-title">
+            {t('rewardCelebrationTitle')}
+          </h2>
+          <p className="celebration-sub">{t('rewardCelebrationSub')}</p>
         </div>
 
         {groups.map((g) => (
           <div key={g.tipe} className="celebration-grup">
             <div className="celebration-grup-head">
               <span>
-                {REWARD_TIPE_ICON[g.tipe]} {REWARD_TIPE_LABEL[g.tipe]}
+                {REWARD_TIPE_ICON[g.tipe]} {t(REWARD_TIPE_DICT_KEY[g.tipe])}
               </span>
-              <span className="celebration-grup-poin">⭐ {g.poin} poin</span>
+              <span className="celebration-grup-poin">
+                ⭐ {g.poin} {t('pointsShort')}
+              </span>
             </div>
             <div className="celebration-grup-rewards">
               {g.rewards.map((r) => (
@@ -166,10 +171,12 @@ export function RewardCelebration({ data, childId, setData }: Props) {
                   className="celebration-reward"
                   onClick={() => claim(r)}
                 >
-                  <span className="celebration-reward-ikon">{r.ikon}</span>
+                  <span className="celebration-reward-ikon">
+                    <EmojiOrImg value={r.ikon} imgSize={36} imgRadius={8} />
+                  </span>
                   <span className="celebration-reward-judul">{r.judul}</span>
                   <span className="celebration-reward-harga">
-                    {r.harga} poin
+                    {r.harga} {t('pointsShort')}
                   </span>
                 </button>
               ))}
@@ -178,7 +185,7 @@ export function RewardCelebration({ data, childId, setData }: Props) {
         ))}
 
         <button className="btn btn-ghost" onClick={dismissAll}>
-          Nanti dulu
+          {t('laterFirst')}
         </button>
       </div>
     </div>

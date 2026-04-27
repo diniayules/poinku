@@ -80,6 +80,8 @@ export type Tema =
   | 'permen'
   | 'ceria'
 
+export type Bahasa = 'id' | 'en'
+
 export type AppData = {
   children: Child[]
   tasks: Task[]
@@ -90,4 +92,5 @@ export type AppData = {
   rewardClaims: RewardClaim[]
   pinHash: string | null
   tema: Tema
+  bahasa: Bahasa
 }

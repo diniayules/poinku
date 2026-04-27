@@ -1,17 +1,21 @@
 import { useState } from 'react'
-import type { AppData, Child } from '../../types'
+import type { AppData, Bahasa, Child, Tema } from '../../types'
 import { hashPin, uid } from '../../storage'
 import { AVATAR_EMOJIS } from '../../constants'
 import { PinPad } from '../../components/PinPad'
 import { EmojiPickerWithUpload } from '../../components/EmojiPickerWithUpload'
 import { EmojiOrImg } from '../../components/EmojiOrImg'
-import {
-  TEMA_FLOATERS,
-  TEMA_IKON,
-  TEMA_LABEL,
-  TEMA_OPSI,
-} from '../../storage'
-import type { Tema } from '../../types'
+import { TEMA_FLOATERS, TEMA_IKON, TEMA_OPSI } from '../../storage'
+import { LANG_FLAG, LANG_LABEL, LANG_OPSI, useT } from '../../i18n'
+import type { DictKey } from '../../i18n/dict'
+
+const TEMA_LABEL_KEY: Record<Tema, DictKey> = {
+  'luar-angkasa': 'temaLuarAngkasa',
+  hutan: 'temaHutan',
+  'bawah-laut': 'temaBawahLaut',
+  permen: 'temaPermen',
+  ceria: 'temaCeria',
+}
 
 type Props = {
   data: AppData
@@ -19,6 +23,7 @@ type Props = {
 }
 
 export function ParentPengaturan({ data, setData }: Props) {
+  const t = useT()
   const [formMode, setFormMode] = useState<'closed' | 'add' | 'edit'>(
     'closed',
   )
@@ -76,16 +81,11 @@ export function ParentPengaturan({ data, setData }: Props) {
   function hapusAnak(id: string) {
     const ch = data.children.find((c) => c.id === id)
     if (!ch) return
-    if (
-      !confirm(
-        `Hapus ${ch.nama}? Semua tugas, konfirmasi, dan riwayat poinnya juga ikut terhapus.`,
-      )
-    )
-      return
+    if (!confirm(t('confirmDeleteChild', { nama: ch.nama }))) return
     setData({
       ...data,
       children: data.children.filter((c) => c.id !== id),
-      tasks: data.tasks.filter((t) => t.childId !== id),
+      tasks: data.tasks.filter((t2) => t2.childId !== id),
       completions: data.completions.filter((c) => c.childId !== id),
       adjustments: data.adjustments.filter((a) => a.childId !== id),
       proposals: data.proposals.filter((p) => p.childId !== id),
@@ -97,7 +97,7 @@ export function ParentPengaturan({ data, setData }: Props) {
   async function simpanPin() {
     if (pin1.length !== 4 || pin2.length !== 4) return
     if (pin1 !== pin2) {
-      setPinErr('PIN tidak sama')
+      setPinErr(t('pinMismatch'))
       return
     }
     const pinHash = await hashPin(pin1)
@@ -106,33 +106,53 @@ export function ParentPengaturan({ data, setData }: Props) {
     setPin2('')
     setPinErr('')
     setPinOpen(false)
-    alert('PIN berhasil diubah ✅')
+    alert(t('pinChanged'))
   }
 
-  function pilihTema(t: Tema) {
-    setData({ ...data, tema: t })
+  function pilihTema(tema: Tema) {
+    setData({ ...data, tema })
+  }
+
+  function pilihBahasa(bahasa: Bahasa) {
+    setData({ ...data, bahasa })
   }
 
   return (
     <div className="screen" style={{ gap: 16 }}>
       <div>
-        <div className="label">Tema</div>
-        <div className="tema-grid">
-          {TEMA_OPSI.map((t) => (
+        <div className="label">{t('languageLabel')}</div>
+        <div className="select-chip-row">
+          {LANG_OPSI.map((b) => (
             <button
-              key={t}
+              key={b}
               type="button"
-              className={`tema-card tema-${t} ${
-                data.tema === t ? 'active' : ''
-              }`}
-              onClick={() => pilihTema(t)}
+              className={`select-chip ${data.bahasa === b ? 'active' : ''}`}
+              onClick={() => pilihBahasa(b)}
             >
-              <span className="tema-ikon">{TEMA_IKON[t]}</span>
-              <span className="tema-nama">{TEMA_LABEL[t]}</span>
+              {LANG_FLAG[b]} {LANG_LABEL[b]}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <div className="label">{t('themeLabel')}</div>
+        <div className="tema-grid">
+          {TEMA_OPSI.map((tema) => (
+            <button
+              key={tema}
+              type="button"
+              className={`tema-card tema-${tema} ${
+                data.tema === tema ? 'active' : ''
+              }`}
+              onClick={() => pilihTema(tema)}
+            >
+              <span className="tema-ikon">{TEMA_IKON[tema]}</span>
+              <span className="tema-nama">{t(TEMA_LABEL_KEY[tema])}</span>
               <span className="tema-floaters">
-                {TEMA_FLOATERS[t].slice(0, 4).join(' ')}
+                {TEMA_FLOATERS[tema].slice(0, 4).join(' ')}
               </span>
-              {data.tema === t && (
+              {data.tema === tema && (
                 <span className="tema-check">✓</span>
               )}
             </button>
@@ -141,7 +161,7 @@ export function ParentPengaturan({ data, setData }: Props) {
       </div>
 
       <div>
-        <div className="label">Anak</div>
+        <div className="label">{t('childrenLabel')}</div>
         <div className="task-list">
           {data.children.map((c) => (
             <div key={c.id} className="row">
@@ -150,17 +170,19 @@ export function ParentPengaturan({ data, setData }: Props) {
               </span>
               <div className="main">
                 <div className="title-text">{c.nama}</div>
-                <div className="meta">⭐ {c.totalPoin} poin</div>
+                <div className="meta">
+                  ⭐ {c.totalPoin} {t('pointsShort')}
+                </div>
               </div>
               <div className="row-actions">
                 <button className="icon-btn" onClick={() => bukaEdit(c)}>
-                  Ubah
+                  {t('edit')}
                 </button>
                 <button
                   className="icon-btn reject"
                   onClick={() => hapusAnak(c.id)}
                 >
-                  Hapus
+                  {t('delete')}
                 </button>
               </div>
             </div>
@@ -172,21 +194,23 @@ export function ParentPengaturan({ data, setData }: Props) {
             style={{ marginTop: 12 }}
             onClick={bukaAdd}
           >
-            + Tambah Anak
+            {t('addChild')}
           </button>
         ) : (
           <div className="card form" style={{ marginTop: 12 }}>
             <div className="label">
-              {formMode === 'edit' ? 'Ubah Profil Anak' : 'Tambah Anak Baru'}
+              {formMode === 'edit'
+                ? t('editChildTitle')
+                : t('addChildTitle')}
             </div>
             <input
               className="input"
-              placeholder="Nama"
+              placeholder={t('fieldName')}
               value={nama}
               onChange={(e) => setNama(e.target.value)}
             />
             <div>
-              <div className="label">Avatar (foto atau pilih emoji)</div>
+              <div className="label">{t('fieldAvatar')}</div>
               <EmojiPickerWithUpload
                 emojis={AVATAR_EMOJIS}
                 value={avatar}
@@ -195,7 +219,7 @@ export function ParentPengaturan({ data, setData }: Props) {
             </div>
             <div className="btn-row">
               <button className="btn btn-ghost" onClick={tutupForm}>
-                Batal
+                {t('cancel')}
               </button>
               <button
                 className="btn"
@@ -203,7 +227,7 @@ export function ParentPengaturan({ data, setData }: Props) {
                 style={{ opacity: !nama.trim() ? 0.5 : 1 }}
                 onClick={simpanAnak}
               >
-                Simpan
+                {t('save')}
               </button>
             </div>
           </div>
@@ -211,17 +235,17 @@ export function ParentPengaturan({ data, setData }: Props) {
       </div>
 
       <div>
-        <div className="label">PIN Orang Tua</div>
+        <div className="label">{t('pinLabel')}</div>
         {!pinOpen ? (
           <button className="btn btn-ghost" onClick={() => setPinOpen(true)}>
-            Ganti PIN
+            {t('changePin')}
           </button>
         ) : (
           <div className="card form">
-            <div className="label">PIN Baru</div>
+            <div className="label">{t('pinNew')}</div>
             <PinPad value={pin1} onChange={setPin1} />
             <div className="label" style={{ marginTop: 8 }}>
-              Ketik Ulang
+              {t('pinRetype')}
             </div>
             <PinPad value={pin2} onChange={setPin2} />
             <p className="pin-error">{pinErr}</p>
@@ -235,7 +259,7 @@ export function ParentPengaturan({ data, setData }: Props) {
                   setPinOpen(false)
                 }}
               >
-                Batal
+                {t('cancel')}
               </button>
               <button
                 className="btn"
@@ -246,7 +270,7 @@ export function ParentPengaturan({ data, setData }: Props) {
                 }}
                 onClick={simpanPin}
               >
-                Simpan PIN
+                {t('savePin')}
               </button>
             </div>
           </div>

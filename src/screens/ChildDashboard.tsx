@@ -4,6 +4,7 @@ import type { AppData, Completion, Proposal } from '../types'
 import { HadiahSection } from '../components/HadiahSection'
 import { RewardCelebration } from '../components/RewardCelebration'
 import { EmojiOrImg } from '../components/EmojiOrImg'
+import { useT } from '../i18n'
 
 type Props = {
   data: AppData
@@ -13,6 +14,7 @@ type Props = {
 }
 
 export function ChildDashboard({ data, childId, setData, onBack }: Props) {
+  const t = useT()
   const [usulOpen, setUsulOpen] = useState(false)
   const [usulJudul, setUsulJudul] = useState('')
 
@@ -23,7 +25,9 @@ export function ChildDashboard({ data, childId, setData, onBack }: Props) {
   const now = new Date()
   const weekendNow = isWeekend(now)
   const tasks = data.tasks
-    .filter((t) => t.childId === childId && taskBerlakuHariIni(t, now))
+    .filter(
+      (task) => task.childId === childId && taskBerlakuHariIni(task, now),
+    )
     .slice()
     .sort((a, b) => {
       if (a.jam && b.jam) return a.jam.localeCompare(b.jam)
@@ -86,7 +90,7 @@ export function ChildDashboard({ data, childId, setData, onBack }: Props) {
   return (
     <div className="screen">
       <button className="back-btn" onClick={onBack}>
-        ← Ganti Profil
+        ← {t('changeProfile')}
       </button>
 
       <div className="dash-header">
@@ -100,26 +104,24 @@ export function ChildDashboard({ data, childId, setData, onBack }: Props) {
       </div>
 
       <h3 className="dash-section-title">
-        Tugas Hari Ini
+        {t('todaysTasks')}
         <span className="badge-hari">
-          {weekendNow ? '🏖️ Akhir Pekan' : '🎒 Hari Sekolah'}
+          {weekendNow ? `🏖️ ${t('weekend')}` : `🎒 ${t('schoolDay')}`}
         </span>
       </h3>
       <div className="task-list">
         {tasks.length === 0 && proposalsHariIni.length === 0 && (
-          <div className="empty-state">
-            Belum ada tugas hari ini. Kamu bisa menambahkan sendiri 👇
-          </div>
+          <div className="empty-state">{t('noTasksToday')}</div>
         )}
-        {tasks.map((t) => {
-          const comp = findCompletion(t.id)
+        {tasks.map((task) => {
+          const comp = findCompletion(task.id)
           const status = comp?.status
           const disabled = !!comp
           return (
             <button
-              key={t.id}
+              key={task.id}
               className={`task-item ${status ?? ''}`}
-              onClick={() => markDone(t.id)}
+              onClick={() => markDone(task.id)}
               disabled={disabled}
             >
               <span
@@ -133,26 +135,33 @@ export function ChildDashboard({ data, childId, setData, onBack }: Props) {
               <span className="task-body">
                 <span className="judul-row">
                   <span className="ikon">
-                    <EmojiOrImg value={t.ikon} imgSize={36} imgRadius={10} />
+                    <EmojiOrImg
+                      value={task.ikon}
+                      imgSize={36}
+                      imgRadius={10}
+                    />
                   </span>
-                  <span className="judul-teks">{t.judul}</span>
-                  {!status && <span className="poin-badge">+{t.poin}</span>}
+                  <span className="judul-teks">{task.judul}</span>
+                  {!status && (
+                    <span className="poin-badge">+{task.poin}</span>
+                  )}
                 </span>
-                {(t.jam || t.durasiMenit) && (
+                {(task.jam || task.durasiMenit) && (
                   <span className="jam-badge">
-                    {t.jam && `🕐 ${t.jam}`}
-                    {t.jam && t.durasiMenit && ' · '}
-                    {t.durasiMenit && `⏱️ ${t.durasiMenit} menit`}
+                    {task.jam && `🕐 ${task.jam}`}
+                    {task.jam && task.durasiMenit && ' · '}
+                    {task.durasiMenit &&
+                      `⏱️ ${task.durasiMenit} ${t('minutesShort')}`}
                   </span>
                 )}
                 {status === 'menunggu' && (
                   <span className="status-text menunggu">
-                    ⏳ Menunggu konfirmasi orang tua…
+                    {t('waitingParent')}
                   </span>
                 )}
                 {status === 'disetujui' && (
                   <span className="status-text disetujui">
-                    ✨ Disetujui! +{t.poin} poin masuk
+                    {t('approvedPoints', { poin: task.poin })}
                   </span>
                 )}
               </span>
@@ -176,16 +185,16 @@ export function ChildDashboard({ data, childId, setData, onBack }: Props) {
                 <span className="judul-row">
                   <span className="ikon">✨</span>
                   <span className="judul-teks">{p.judul}</span>
-                  <span className="badge-usul">Usulan</span>
+                  <span className="badge-usul">{t('proposalBadge')}</span>
                 </span>
                 {status === 'menunggu' && (
                   <span className="status-text menunggu">
-                    ⏳ Menunggu orang tua menentukan poinnya…
+                    {t('waitingPointSet')}
                   </span>
                 )}
                 {status === 'disetujui' && (
                   <span className="status-text disetujui">
-                    ✨ Disetujui! +{p.poin ?? 0} poin masuk
+                    {t('approvedPoints', { poin: p.poin ?? 0 })}
                   </span>
                 )}
               </span>
@@ -200,24 +209,22 @@ export function ChildDashboard({ data, childId, setData, onBack }: Props) {
           onClick={() => setUsulOpen(true)}
           type="button"
         >
-          ＋ Tambah tugas hari ini
+          {t('addExtraTask')}
         </button>
       ) : (
         <div className="card form usul-form">
-          <div className="label">Tugas tambahan yang kamu kerjakan</div>
+          <div className="label">{t('extraTaskLabel')}</div>
           <input
             className="input"
             autoFocus
-            placeholder="Contoh: Membuatkan susu untuk adik"
+            placeholder={t('extraTaskPlaceholder')}
             value={usulJudul}
             onChange={(e) => setUsulJudul(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') kirimUsul()
             }}
           />
-          <p className="usul-hint">
-            Poinnya akan ditentukan oleh orang tua saat mengkonfirmasi.
-          </p>
+          <p className="usul-hint">{t('extraTaskHint')}</p>
           <div className="btn-row">
             <button
               className="btn btn-ghost"
@@ -226,7 +233,7 @@ export function ChildDashboard({ data, childId, setData, onBack }: Props) {
                 setUsulJudul('')
               }}
             >
-              Batal
+              {t('cancel')}
             </button>
             <button
               className="btn"
@@ -234,7 +241,7 @@ export function ChildDashboard({ data, childId, setData, onBack }: Props) {
               style={{ opacity: !usulJudul.trim() ? 0.5 : 1 }}
               onClick={kirimUsul}
             >
-              Kirim ke Orang Tua
+              {t('sendToParent')}
             </button>
           </div>
         </div>

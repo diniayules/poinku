@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { hashPin } from '../storage'
 import { PinPad } from '../components/PinPad'
+import { useT } from '../i18n'
 
 type Props = {
   pinHash: string
@@ -9,6 +10,7 @@ type Props = {
 }
 
 export function PinGate({ pinHash, onSuccess, onCancel }: Props) {
+  const t = useT()
   const [pin, setPin] = useState('')
   const [err, setErr] = useState('')
 
@@ -20,22 +22,22 @@ export function PinGate({ pinHash, onSuccess, onCancel }: Props) {
       if (h === pinHash) {
         onSuccess()
       } else {
-        setErr('PIN salah. Coba lagi.')
+        setErr(t('pinWrong'))
         setPin('')
       }
     })
     return () => {
       cancelled = true
     }
-  }, [pin, pinHash, onSuccess])
+  }, [pin, pinHash, onSuccess, t])
 
   return (
     <div className="screen setup">
       <button className="back-btn" onClick={onCancel}>
-        ← Batal
+        ← {t('cancel')}
       </button>
       <h2 className="screen-title">
-        Masukkan PIN Orang Tua <span className="emoji">🔒</span>
+        {t('enterPin')} <span className="emoji">🔒</span>
       </h2>
       <PinPad
         value={pin}

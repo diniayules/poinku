@@ -6,6 +6,7 @@ import { Home } from './screens/Home'
 import { ChildDashboard } from './screens/ChildDashboard'
 import { PinGate } from './screens/PinGate'
 import { ParentMode } from './screens/ParentMode'
+import { LangProvider, useT } from './i18n'
 import './App.css'
 
 export type ParentTab =
@@ -33,61 +34,64 @@ function App() {
     document.documentElement.dataset.tema = data.tema
   }, [data.tema])
 
+  useEffect(() => {
+    document.documentElement.lang = data.bahasa
+  }, [data.bahasa])
+
   const needsSetup = !data.pinHash || data.children.length === 0
 
-  if (needsSetup) {
-    return (
-      <>
-        <Floaters tema={data.tema} />
-        <div className="app">
-          <Header tema={data.tema} />
-          <Setup data={data} onFinish={setData} />
-        </div>
-      </>
-    )
-  }
-
   return (
-    <>
+    <LangProvider value={data.bahasa}>
       <Floaters tema={data.tema} />
       <div className="app">
         <Header tema={data.tema} />
-        {screen.name === 'home' && (
-          <Home
-            data={data}
-            onPickChild={(childId) => setScreen({ name: 'child', childId })}
-            onPickParentTab={(tab) =>
-              setScreen({ name: 'pin', targetTab: tab })
-            }
-          />
-        )}
-        {screen.name === 'child' && (
-          <ChildDashboard
-            data={data}
-            childId={screen.childId}
-            setData={setData}
-            onBack={() => setScreen({ name: 'home' })}
-          />
-        )}
-        {screen.name === 'pin' && (
-          <PinGate
-            pinHash={data.pinHash!}
-            onSuccess={() =>
-              setScreen({ name: 'parent', initialTab: screen.targetTab })
-            }
-            onCancel={() => setScreen({ name: 'home' })}
-          />
-        )}
-        {screen.name === 'parent' && (
-          <ParentMode
-            data={data}
-            setData={setData}
-            initialTab={screen.initialTab}
-            onExit={() => setScreen({ name: 'home' })}
-          />
+        {needsSetup ? (
+          <Setup data={data} onFinish={setData} />
+        ) : (
+          <>
+            {screen.name === 'home' && (
+              <Home
+                data={data}
+                onPickChild={(childId) =>
+                  setScreen({ name: 'child', childId })
+                }
+                onPickParentTab={(tab) =>
+                  setScreen({ name: 'pin', targetTab: tab })
+                }
+              />
+            )}
+            {screen.name === 'child' && (
+              <ChildDashboard
+                data={data}
+                childId={screen.childId}
+                setData={setData}
+                onBack={() => setScreen({ name: 'home' })}
+              />
+            )}
+            {screen.name === 'pin' && (
+              <PinGate
+                pinHash={data.pinHash!}
+                onSuccess={() =>
+                  setScreen({
+                    name: 'parent',
+                    initialTab: screen.targetTab,
+                  })
+                }
+                onCancel={() => setScreen({ name: 'home' })}
+              />
+            )}
+            {screen.name === 'parent' && (
+              <ParentMode
+                data={data}
+                setData={setData}
+                initialTab={screen.initialTab}
+                onExit={() => setScreen({ name: 'home' })}
+              />
+            )}
+          </>
         )}
       </div>
-    </>
+    </LangProvider>
   )
 }
 
@@ -103,11 +107,12 @@ function Floaters({ tema }: { tema: AppData['tema'] }) {
 }
 
 function Header({ tema }: { tema: AppData['tema'] }) {
+  const t = useT()
   return (
     <header className="app-header">
       <div className="app-title">
         <span className="rocket">{TEMA_IKON[tema]}</span>
-        <span>Petualangan Poin</span>
+        <span>{t('appTitle')}</span>
       </div>
     </header>
   )

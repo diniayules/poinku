@@ -12,6 +12,7 @@ const EMPTY: AppData = {
   rewardClaims: [],
   pinHash: null,
   tema: 'luar-angkasa',
+  bahasa: 'id',
 }
 
 export function loadData(): AppData {
@@ -29,6 +30,7 @@ export function loadData(): AppData {
       rewardClaims: parsed.rewardClaims ?? [],
       pinHash: parsed.pinHash ?? null,
       tema: parsed.tema ?? 'luar-angkasa',
+      bahasa: parsed.bahasa ?? 'id',
     }
   } catch {
     return structuredClone(EMPTY)
@@ -64,6 +66,15 @@ export const JADWAL_LABEL: Record<Jadwal, string> = {
   'setiap-hari': 'Setiap hari',
   'hari-sekolah': 'Hari sekolah',
   'akhir-pekan': 'Akhir pekan',
+}
+
+export const JADWAL_DICT_KEY: Record<
+  Jadwal,
+  'jadwalSetiap' | 'jadwalSekolah' | 'jadwalAkhir'
+> = {
+  'setiap-hari': 'jadwalSetiap',
+  'hari-sekolah': 'jadwalSekolah',
+  'akhir-pekan': 'jadwalAkhir',
 }
 
 export const JADWAL_ICON: Record<Jadwal, string> = {
@@ -116,6 +127,29 @@ export const TEMA_IKON: Record<Tema, string> = {
   ceria: '🌈',
 }
 
+export const TEMA_HOME_EMOJI: Record<Tema, string> = {
+  'luar-angkasa': '👩‍🚀',
+  hutan: '🦊',
+  'bawah-laut': '🐠',
+  permen: '🍭',
+  ceria: '🦄',
+}
+
+export const TEMA_HOME_TITLE_KEY: Record<
+  Tema,
+  | 'homeTitleLuarAngkasa'
+  | 'homeTitleHutan'
+  | 'homeTitleBawahLaut'
+  | 'homeTitlePermen'
+  | 'homeTitleCeria'
+> = {
+  'luar-angkasa': 'homeTitleLuarAngkasa',
+  hutan: 'homeTitleHutan',
+  'bawah-laut': 'homeTitleBawahLaut',
+  permen: 'homeTitlePermen',
+  ceria: 'homeTitleCeria',
+}
+
 export const TEMA_FLOATERS: Record<Tema, string[]> = {
   'luar-angkasa': ['🪐', '🛸', '🌟', '☄️', '👾'],
   hutan: ['🦊', '🐿️', '🍄', '🦋', '🐞'],
@@ -131,6 +165,24 @@ export const TEMA_OPSI: Tema[] = [
   'permen',
   'ceria',
 ]
+
+export const REWARD_TIPE_DICT_KEY: Record<
+  RewardTipe,
+  'rewardTipeHarian' | 'rewardTipeMingguan' | 'rewardTipeBulanan'
+> = {
+  harian: 'rewardTipeHarian',
+  mingguan: 'rewardTipeMingguan',
+  bulanan: 'rewardTipeBulanan',
+}
+
+export const REWARD_TIPE_LOWER_KEY: Record<
+  RewardTipe,
+  'periodeHarianLower' | 'periodeMingguanLower' | 'periodeBulananLower'
+> = {
+  harian: 'periodeHarianLower',
+  mingguan: 'periodeMingguanLower',
+  bulanan: 'periodeBulananLower',
+}
 
 export const REWARD_TIPE_LABEL: Record<RewardTipe, string> = {
   harian: 'Harian',

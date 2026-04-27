@@ -2,6 +2,9 @@ import { useState } from 'react'
 import type { AppData } from '../types'
 import type { ParentTab } from '../App'
 import { EmojiOrImg } from '../components/EmojiOrImg'
+import { useT } from '../i18n'
+import type { DictKey } from '../i18n/dict'
+import { TEMA_HOME_EMOJI, TEMA_HOME_TITLE_KEY } from '../storage'
 
 type Props = {
   data: AppData
@@ -12,44 +15,45 @@ type Props = {
 type MenuItem = {
   tab: ParentTab
   ikon: string
-  judul: string
-  deskripsi: string
+  judulKey: DictKey
+  deskripsiKey: DictKey
 }
 
 const MENU_ITEMS: MenuItem[] = [
   {
     tab: 'konfirmasi',
     ikon: '✅',
-    judul: 'Konfirmasi',
-    deskripsi: 'Setujui tugas, usulan, & klaim hadiah anak',
+    judulKey: 'tabKonfirmasi',
+    deskripsiKey: 'menuKonfirmasiDesc',
   },
   {
     tab: 'tugas',
     ikon: '📝',
-    judul: 'Tugas Rutinitas',
-    deskripsi: 'Atur daftar tugas harian anak',
+    judulKey: 'tugasRutinitas',
+    deskripsiKey: 'menuTugasDesc',
   },
   {
     tab: 'hadiah',
     ikon: '🎁',
-    judul: 'Hadiah',
-    deskripsi: 'Kelola katalog hadiah & harganya',
+    judulKey: 'tabHadiah',
+    deskripsiKey: 'menuHadiahDesc',
   },
   {
     tab: 'sesuaikan',
     ikon: '⚖️',
-    judul: 'Sesuaikan Poin',
-    deskripsi: 'Tambah bonus atau kurangi poin',
+    judulKey: 'tabSesuaikan',
+    deskripsiKey: 'menuSesuaikanDesc',
   },
   {
     tab: 'pengaturan',
     ikon: '⚙️',
-    judul: 'Pengaturan',
-    deskripsi: 'Tambah/hapus anak, ganti PIN',
+    judulKey: 'tabPengaturan',
+    deskripsiKey: 'menuPengaturanDesc',
   },
 ]
 
 export function Home({ data, onPickChild, onPickParentTab }: Props) {
+  const t = useT()
   const [menuOpen, setMenuOpen] = useState(false)
 
   const pendingCount =
@@ -61,11 +65,10 @@ export function Home({ data, onPickChild, onPickParentTab }: Props) {
     <>
       <div className="screen">
         <h1 className="screen-title">
-          Pilih Astronot <span className="emoji">👩‍🚀</span>
+          {t(TEMA_HOME_TITLE_KEY[data.tema])}{' '}
+          <span className="emoji">{TEMA_HOME_EMOJI[data.tema]}</span>
         </h1>
-        <p className="screen-subtitle">
-          Siapa yang mau lihat poinnya hari ini?
-        </p>
+        <p className="screen-subtitle">{t('homeSub')}</p>
         <div className="home-grid">
           {data.children.map((c) => (
             <button
@@ -77,7 +80,9 @@ export function Home({ data, onPickChild, onPickParentTab }: Props) {
                 <EmojiOrImg value={c.avatar} imgSize={96} />
               </span>
               <span className="nama">{c.nama}</span>
-              <span className="poin">⭐ {c.totalPoin} poin</span>
+              <span className="poin">
+                ⭐ {c.totalPoin} {t('pointsShort')}
+              </span>
             </button>
           ))}
         </div>
@@ -86,7 +91,7 @@ export function Home({ data, onPickChild, onPickParentTab }: Props) {
       <button
         className="parent-fab"
         onClick={() => setMenuOpen(true)}
-        aria-label="Mode Orang Tua"
+        aria-label={t('parentMode')}
       >
         <span className="parent-fab-ikon">🔒</span>
         {pendingCount > 0 && (
@@ -106,9 +111,9 @@ export function Home({ data, onPickChild, onPickParentTab }: Props) {
             <div className="parent-menu-head">
               <span className="parent-menu-emoji">🔒</span>
               <div>
-                <div className="parent-menu-title">Mode Orang Tua</div>
+                <div className="parent-menu-title">{t('parentMode')}</div>
                 <div className="parent-menu-sub">
-                  Pilih menu — perlu PIN untuk masuk
+                  {t('parentModeMenuSub')}
                 </div>
               </div>
             </div>
@@ -128,7 +133,7 @@ export function Home({ data, onPickChild, onPickParentTab }: Props) {
                     <span className="parent-menu-item-ikon">{m.ikon}</span>
                     <span className="parent-menu-item-main">
                       <span className="parent-menu-item-judul">
-                        {m.judul}
+                        {t(m.judulKey)}
                         {showBadge && (
                           <span className="parent-menu-badge">
                             {pendingCount}
@@ -136,7 +141,7 @@ export function Home({ data, onPickChild, onPickParentTab }: Props) {
                         )}
                       </span>
                       <span className="parent-menu-item-desk">
-                        {m.deskripsi}
+                        {t(m.deskripsiKey)}
                       </span>
                     </span>
                     <span className="parent-menu-chev">›</span>
@@ -148,7 +153,7 @@ export function Home({ data, onPickChild, onPickParentTab }: Props) {
               className="btn btn-ghost"
               onClick={() => setMenuOpen(false)}
             >
-              Tutup
+              {t('close')}
             </button>
           </div>
         </div>

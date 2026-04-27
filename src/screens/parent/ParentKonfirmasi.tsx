@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import type { AppData } from '../../types'
 import {
+  REWARD_TIPE_DICT_KEY,
   REWARD_TIPE_ICON,
-  REWARD_TIPE_LABEL,
+  REWARD_TIPE_LOWER_KEY,
   formatJam,
   hitungLewat,
 } from '../../storage'
 import { EmojiOrImg } from '../../components/EmojiOrImg'
+import { useT } from '../../i18n'
 
 type Props = {
   data: AppData
@@ -14,6 +16,7 @@ type Props = {
 }
 
 export function ParentKonfirmasi({ data, setData }: Props) {
+  const t = useT()
   const pendingCompletions = data.completions.filter(
     (c) => c.status === 'menunggu',
   )
@@ -94,11 +97,7 @@ export function ParentKonfirmasi({ data, setData }: Props) {
     pendingProposals.length === 0 &&
     pendingClaims.length === 0
   ) {
-    return (
-      <div className="empty-state">
-        Tidak ada yang menunggu konfirmasi 🎉
-      </div>
-    )
+    return <div className="empty-state">{t('noPending')}</div>
   }
 
   return (
@@ -120,17 +119,20 @@ export function ParentKonfirmasi({ data, setData }: Props) {
                 {task.judul}
               </div>
               <div className="meta">
-                {child.nama} · +{task.poin} poin
+                {child.nama} · +{task.poin} {t('pointsShort')}
                 {task.jam && ` · 🕐 ${task.jam}`}
-                {task.durasiMenit && ` · ⏱️ ${task.durasiMenit} menit`}
+                {task.durasiMenit &&
+                  ` · ⏱️ ${task.durasiMenit} ${t('minutesShort')}`}
               </div>
               <div className="meta" style={{ marginTop: 4 }}>
-                Selesai pukul {jamSelesai}
+                {t('finishedAt', { jam: jamSelesai })}
                 {lewat !== null && lewat > 0 && (
-                  <span className="late-badge">⚠️ Lewat {lewat} menit</span>
+                  <span className="late-badge">
+                    {t('lateBy', { n: lewat })}
+                  </span>
                 )}
                 {lewat !== null && lewat <= 0 && (
-                  <span className="ontime-badge">✓ Tepat waktu</span>
+                  <span className="ontime-badge">{t('onTime')}</span>
                 )}
               </div>
             </div>
@@ -139,13 +141,13 @@ export function ParentKonfirmasi({ data, setData }: Props) {
                 className="icon-btn approve"
                 onClick={() => handleCompletion(c.id, true)}
               >
-                ✓ Setuju
+                ✓ {t('approve')}
               </button>
               <button
                 className="icon-btn reject"
                 onClick={() => handleCompletion(c.id, false)}
               >
-                ✗ Tolak
+                ✗ {t('reject')}
               </button>
             </div>
           </div>
@@ -163,17 +165,21 @@ export function ParentKonfirmasi({ data, setData }: Props) {
             </span>
             <div className="main">
               <div className="title-text">
-                <span className="badge-claim">Klaim Hadiah</span> {reward.ikon}{' '}
+                <span className="badge-claim">{t('rewardClaimBadge')}</span>{' '}
+                <EmojiOrImg value={reward.ikon} imgSize={22} imgRadius={6} />{' '}
                 {reward.judul}
               </div>
               <div className="meta">
                 {child.nama} · {REWARD_TIPE_ICON[reward.tipe]}{' '}
-                {REWARD_TIPE_LABEL[reward.tipe]} · {c.hargaSaatItu} poin
+                {t(REWARD_TIPE_DICT_KEY[reward.tipe])} ·{' '}
+                {c.hargaSaatItu} {t('pointsShort')}
               </div>
               <div className="meta" style={{ marginTop: 4 }}>
-                Diklaim pukul {formatJam(c.diklaimPada)} · poin{' '}
-                {REWARD_TIPE_LABEL[reward.tipe].toLowerCase()} saat itu:{' '}
-                <strong>{c.poinPeriodeSaatItu}</strong>
+                {t('claimedAt', { jam: formatJam(c.diklaimPada) })} ·{' '}
+                {t('pointsAt', {
+                  periode: t(REWARD_TIPE_LOWER_KEY[reward.tipe]),
+                })}
+                : <strong>{c.poinPeriodeSaatItu}</strong>
               </div>
             </div>
             <div className="row-actions">
@@ -181,13 +187,13 @@ export function ParentKonfirmasi({ data, setData }: Props) {
                 className="icon-btn approve"
                 onClick={() => handleClaim(c.id, true)}
               >
-                ✓ Berikan
+                ✓ {t('give')}
               </button>
               <button
                 className="icon-btn reject"
                 onClick={() => handleClaim(c.id, false)}
               >
-                ✗ Tolak
+                ✗ {t('reject')}
               </button>
             </div>
           </div>
@@ -205,13 +211,14 @@ export function ParentKonfirmasi({ data, setData }: Props) {
             </span>
             <div className="main">
               <div className="title-text">
-                <span className="badge-usul">Usulan</span> ✨ {p.judul}
+                <span className="badge-usul">{t('proposalBadge')}</span> ✨{' '}
+                {p.judul}
               </div>
               <div className="meta">
-                {child.nama} · dikirim pukul {formatJam(p.dibuatPada)}
+                {child.nama} · {t('sentAt', { jam: formatJam(p.dibuatPada) })}
               </div>
               <div className="poin-input-row">
-                <span className="label-inline">Beri poin:</span>
+                <span className="label-inline">{t('givePoints')}</span>
                 <input
                   className="input poin-input"
                   type="number"
@@ -234,13 +241,13 @@ export function ParentKonfirmasi({ data, setData }: Props) {
                 style={{ opacity: poin <= 0 ? 0.5 : 1 }}
                 onClick={() => handleProposal(p.id, true)}
               >
-                ✓ Setuju +{poin || 0}
+                {t('approveWithPoints', { n: poin || 0 })}
               </button>
               <button
                 className="icon-btn reject"
                 onClick={() => handleProposal(p.id, false)}
               >
-                ✗ Tolak
+                ✗ {t('reject')}
               </button>
             </div>
           </div>

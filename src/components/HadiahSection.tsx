@@ -1,12 +1,14 @@
 import type { AppData, Reward, RewardTipe } from '../types'
 import {
+  REWARD_TIPE_DICT_KEY,
   REWARD_TIPE_ICON,
-  REWARD_TIPE_LABEL,
   periodKey,
   poinDalamPeriode,
   semuaTugasHariIniSelesai,
   uid,
 } from '../storage'
+import { EmojiOrImg } from './EmojiOrImg'
+import { useT } from '../i18n'
 
 const TIPE_ORDER: RewardTipe[] = ['harian', 'mingguan', 'bulanan']
 
@@ -17,6 +19,7 @@ type Props = {
 }
 
 export function HadiahSection({ data, childId, setData }: Props) {
+  const t = useT()
   const now = new Date()
   const rewards = data.rewards.filter((r) => r.childId === childId)
   if (rewards.length === 0) return null
@@ -58,25 +61,23 @@ export function HadiahSection({ data, childId, setData }: Props) {
 
   return (
     <>
-      <h3 className="dash-section-title hadiah-title">Hadiah</h3>
+      <h3 className="dash-section-title hadiah-title">{t('rewardsTitle')}</h3>
       {!tugasSelesai && (
-        <div className="hadiah-gate">
-          🔒 Selesaikan dulu semua tugas hari ini, baru kamu bisa klaim hadiah!
-        </div>
+        <div className="hadiah-gate">{t('rewardsGate')}</div>
       )}
       <div className="hadiah-progress-grid">
-        {TIPE_ORDER.map((t) => {
-          const poin = poinDalamPeriode(data, childId, t, now)
+        {TIPE_ORDER.map((tipe) => {
+          const poin = poinDalamPeriode(data, childId, tipe, now)
           const max =
             rewards
-              .filter((r) => r.tipe === t)
+              .filter((r) => r.tipe === tipe)
               .reduce((m, r) => Math.max(m, r.harga), 0) || 0
           const pct = max > 0 ? Math.min(100, (poin / max) * 100) : 0
           return (
-            <div key={t} className={`hadiah-progress hadiah-${t}`}>
+            <div key={tipe} className={`hadiah-progress hadiah-${tipe}`}>
               <div className="hadiah-progress-head">
                 <span>
-                  {REWARD_TIPE_ICON[t]} {REWARD_TIPE_LABEL[t]}
+                  {REWARD_TIPE_ICON[tipe]} {t(REWARD_TIPE_DICT_KEY[tipe])}
                 </span>
                 <span className="hadiah-progress-num">
                   {poin}
@@ -95,18 +96,18 @@ export function HadiahSection({ data, childId, setData }: Props) {
       </div>
 
       <div className="hadiah-list">
-        {TIPE_ORDER.map((t) => {
+        {TIPE_ORDER.map((tipe) => {
           const list = rewards
-            .filter((r) => r.tipe === t)
+            .filter((r) => r.tipe === tipe)
             .slice()
             .sort((a, b) => a.harga - b.harga)
           if (list.length === 0) return null
-          const poin = poinDalamPeriode(data, childId, t, now)
-          const aktif = claimAktif(t)
+          const poin = poinDalamPeriode(data, childId, tipe, now)
+          const aktif = claimAktif(tipe)
           return (
-            <div key={t} className="hadiah-grup">
+            <div key={tipe} className="hadiah-grup">
               <div className="hadiah-grup-title">
-                {REWARD_TIPE_ICON[t]} {REWARD_TIPE_LABEL[t]}
+                {REWARD_TIPE_ICON[tipe]} {t(REWARD_TIPE_DICT_KEY[tipe])}
               </div>
               {list.map((r) => {
                 const eligible = poin >= r.harga
@@ -126,30 +127,34 @@ export function HadiahSection({ data, childId, setData }: Props) {
                           : 'locked'
                     }`}
                   >
-                    <span className="hadiah-ikon">{r.ikon}</span>
+                    <span className="hadiah-ikon">
+                      <EmojiOrImg value={r.ikon} imgSize={36} imgRadius={10} />
+                    </span>
                     <div className="hadiah-main">
                       <div className="hadiah-judul">{r.judul}</div>
-                      <div className="hadiah-meta">{r.harga} poin</div>
+                      <div className="hadiah-meta">
+                        {r.harga} {t('pointsShort')}
+                      </div>
                       {claimedThis?.status === 'menunggu' && (
                         <div className="status-text menunggu">
-                          ⏳ Menunggu konfirmasi orang tua
+                          {t('rewardWaiting')}
                         </div>
                       )}
                       {claimedThis?.status === 'diberikan' && (
                         <div className="status-text disetujui">
-                          🎉 Sudah diberikan!
+                          {t('rewardGiven')}
                         </div>
                       )}
                       {!claimedThis && lockedByOther && (
                         <div className="status-text locked">
-                          🔒 Sudah pilih hadiah lain periode ini
+                          {t('rewardLockedOther')}
                         </div>
                       )}
                       {!claimedThis &&
                         !lockedByOther &&
                         !eligible && (
                           <div className="status-text locked">
-                            🔒 Butuh {r.harga - poin} poin lagi
+                            {t('rewardLockedNeed', { poin: r.harga - poin })}
                           </div>
                         )}
                       {!claimedThis &&
@@ -157,7 +162,7 @@ export function HadiahSection({ data, childId, setData }: Props) {
                         eligible &&
                         !tugasSelesai && (
                           <div className="status-text locked">
-                            🔒 Selesaikan tugas hari ini dulu
+                            {t('rewardLockedToday')}
                           </div>
                         )}
                     </div>
@@ -166,7 +171,7 @@ export function HadiahSection({ data, childId, setData }: Props) {
                         className="btn btn-success btn-sm"
                         onClick={() => claimReward(r)}
                       >
-                        Klaim
+                        {t('rewardClaim')}
                       </button>
                     )}
                   </div>

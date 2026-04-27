@@ -1,20 +1,25 @@
 import { useState } from 'react'
 import type { AppData, Jadwal, Task } from '../../types'
-import { JADWAL_ICON, JADWAL_LABEL, uid } from '../../storage'
+import {
+  JADWAL_DICT_KEY,
+  JADWAL_ICON,
+  uid,
+} from '../../storage'
 import { TASK_ICONS } from '../../constants'
 import { EmojiPickerWithUpload } from '../../components/EmojiPickerWithUpload'
 import { EmojiOrImg } from '../../components/EmojiOrImg'
+import { useT } from '../../i18n'
 
 const JADWAL_OPSI: Jadwal[] = ['setiap-hari', 'hari-sekolah', 'akhir-pekan']
 
 function dedupeByJudul(tasks: Task[]): Task[] {
   const seen = new Set<string>()
   const out: Task[] = []
-  for (const t of tasks) {
-    const key = t.judul.toLowerCase().trim()
+  for (const tk of tasks) {
+    const key = tk.judul.toLowerCase().trim()
     if (seen.has(key)) continue
     seen.add(key)
-    out.push(t)
+    out.push(tk)
   }
   return out
 }
@@ -25,6 +30,7 @@ type Props = {
 }
 
 export function ParentTugas({ data, setData }: Props) {
+  const t = useT()
   const [childId, setChildId] = useState<string>(
     data.children[0]?.id ?? '',
   )
@@ -41,21 +47,21 @@ export function ParentTugas({ data, setData }: Props) {
     !editId && judul.trim().length >= 2
       ? dedupeByJudul(
           data.tasks.filter(
-            (t) =>
-              t.childId !== childId &&
-              t.judul.toLowerCase().includes(judul.trim().toLowerCase()) &&
-              t.judul.toLowerCase() !== judul.trim().toLowerCase(),
+            (tk) =>
+              tk.childId !== childId &&
+              tk.judul.toLowerCase().includes(judul.trim().toLowerCase()) &&
+              tk.judul.toLowerCase() !== judul.trim().toLowerCase(),
           ),
         ).slice(0, 5)
       : []
 
-  function applyFromTask(t: Task) {
-    setJudul(t.judul)
-    setPoin(t.poin)
-    setIkon(t.ikon)
-    setJam(t.jam ?? '')
-    setDurasi(t.durasiMenit ?? '')
-    setJadwal(t.jadwal ?? 'setiap-hari')
+  function applyFromTask(tk: Task) {
+    setJudul(tk.judul)
+    setPoin(tk.poin)
+    setIkon(tk.ikon)
+    setJam(tk.jam ?? '')
+    setDurasi(tk.durasiMenit ?? '')
+    setJadwal(tk.jadwal ?? 'setiap-hari')
     setShowSuggest(false)
   }
 
@@ -69,15 +75,15 @@ export function ParentTugas({ data, setData }: Props) {
     setJadwal('setiap-hari')
   }
 
-  function startEdit(t: Task) {
-    setEditId(t.id)
-    setJudul(t.judul)
-    setPoin(t.poin)
-    setIkon(t.ikon)
-    setJam(t.jam ?? '')
-    setDurasi(t.durasiMenit ?? '')
-    setJadwal(t.jadwal ?? 'setiap-hari')
-    setChildId(t.childId)
+  function startEdit(tk: Task) {
+    setEditId(tk.id)
+    setJudul(tk.judul)
+    setPoin(tk.poin)
+    setIkon(tk.ikon)
+    setJam(tk.jam ?? '')
+    setDurasi(tk.durasiMenit ?? '')
+    setJadwal(tk.jadwal ?? 'setiap-hari')
+    setChildId(tk.childId)
   }
 
   function save() {
@@ -88,10 +94,10 @@ export function ParentTugas({ data, setData }: Props) {
     if (editId) {
       setData({
         ...data,
-        tasks: data.tasks.map((t) =>
-          t.id === editId
+        tasks: data.tasks.map((tk) =>
+          tk.id === editId
             ? {
-                ...t,
+                ...tk,
                 judul: judul.trim(),
                 poin,
                 ikon,
@@ -100,7 +106,7 @@ export function ParentTugas({ data, setData }: Props) {
                 durasiMenit: durasiValue,
                 jadwal,
               }
-            : t,
+            : tk,
         ),
       })
     } else {
@@ -120,16 +126,16 @@ export function ParentTugas({ data, setData }: Props) {
   }
 
   function hapus(id: string) {
-    if (!confirm('Hapus tugas ini?')) return
+    if (!confirm(t('confirmDeleteTask'))) return
     setData({
       ...data,
-      tasks: data.tasks.filter((t) => t.id !== id),
+      tasks: data.tasks.filter((tk) => tk.id !== id),
     })
     if (editId === id) resetForm()
   }
 
   const tasksForChild = data.tasks
-    .filter((t) => t.childId === childId)
+    .filter((tk) => tk.childId === childId)
     .slice()
     .sort((a, b) => {
       if (a.jam && b.jam) return a.jam.localeCompare(b.jam)
@@ -141,7 +147,7 @@ export function ParentTugas({ data, setData }: Props) {
   return (
     <div className="screen" style={{ gap: 16 }}>
       <div>
-        <div className="label">Untuk anak</div>
+        <div className="label">{t('forChild')}</div>
         <div className="select-chip-row">
           {data.children.map((c) => (
             <button
@@ -160,12 +166,12 @@ export function ParentTugas({ data, setData }: Props) {
 
       <div className="card form">
         <div className="label">
-          {editId ? 'Ubah Tugas' : 'Tambah Tugas Rutinitas Harian'}
+          {editId ? t('editTaskTitle') : t('addTaskTitle')}
         </div>
         <div className="suggest-wrap">
           <input
             className="input"
-            placeholder="Contoh: Gosok gigi"
+            placeholder={t('taskJudulPlaceholder')}
             value={judul}
             onChange={(e) => {
               setJudul(e.target.value)
@@ -178,9 +184,7 @@ export function ParentTugas({ data, setData }: Props) {
           />
           {showSuggest && suggestions.length > 0 && (
             <div className="suggest-list">
-              <div className="suggest-hint">
-                Sudah pernah dibuat untuk anak lain — klik untuk menyalin
-              </div>
+              <div className="suggest-hint">{t('suggestHint')}</div>
               {suggestions.map((s) => {
                 const ownerChild = data.children.find(
                   (c) => c.id === s.childId,
@@ -194,7 +198,11 @@ export function ParentTugas({ data, setData }: Props) {
                     onClick={() => applyFromTask(s)}
                   >
                     <span className="suggest-ikon">
-                      <EmojiOrImg value={s.ikon} imgSize={26} imgRadius={8} />
+                      <EmojiOrImg
+                        value={s.ikon}
+                        imgSize={26}
+                        imgRadius={8}
+                      />
                     </span>
                     <span className="suggest-main">
                       <span className="suggest-judul">{s.judul}</span>
@@ -208,9 +216,11 @@ export function ParentTugas({ data, setData }: Props) {
                             {ownerChild.nama} ·{' '}
                           </>
                         )}
-                        +{s.poin} poin
+                        +{s.poin} {t('pointsShort')}
                         {s.jam ? ` · 🕐 ${s.jam}` : ''}
-                        {s.durasiMenit ? ` · ⏱️ ${s.durasiMenit}m` : ''}
+                        {s.durasiMenit
+                          ? ` · ⏱️ ${s.durasiMenit}m`
+                          : ''}
                       </span>
                     </span>
                   </button>
@@ -221,7 +231,7 @@ export function ParentTugas({ data, setData }: Props) {
         </div>
         <div className="form-row form-row-3">
           <div>
-            <div className="label">Poin</div>
+            <div className="label">{t('pointsTitle')}</div>
             <input
               className="input"
               type="number"
@@ -231,7 +241,7 @@ export function ParentTugas({ data, setData }: Props) {
             />
           </div>
           <div>
-            <div className="label">Jam (opsional)</div>
+            <div className="label">{t('taskJamOpt')}</div>
             <input
               className="input"
               type="time"
@@ -240,12 +250,12 @@ export function ParentTugas({ data, setData }: Props) {
             />
           </div>
           <div>
-            <div className="label">Durasi (menit)</div>
+            <div className="label">{t('taskDurasi')}</div>
             <input
               className="input"
               type="number"
               min={1}
-              placeholder="mis. 30"
+              placeholder={t('durasiPlaceholder')}
               value={durasi}
               onChange={(e) => {
                 const v = e.target.value
@@ -255,7 +265,7 @@ export function ParentTugas({ data, setData }: Props) {
           </div>
         </div>
         <div>
-          <div className="label">Berlaku pada</div>
+          <div className="label">{t('taskJadwal')}</div>
           <div className="select-chip-row">
             {JADWAL_OPSI.map((j) => (
               <button
@@ -264,13 +274,13 @@ export function ParentTugas({ data, setData }: Props) {
                 className={`select-chip ${jadwal === j ? 'active' : ''}`}
                 onClick={() => setJadwal(j)}
               >
-                {JADWAL_ICON[j]} {JADWAL_LABEL[j]}
+                {JADWAL_ICON[j]} {t(JADWAL_DICT_KEY[j])}
               </button>
             ))}
           </div>
         </div>
         <div>
-          <div className="label">Ikon (foto atau pilih emoji)</div>
+          <div className="label">{t('taskIkon')}</div>
           <EmojiPickerWithUpload
             emojis={TASK_ICONS}
             value={ikon}
@@ -281,7 +291,7 @@ export function ParentTugas({ data, setData }: Props) {
         <div className="btn-row">
           {editId && (
             <button className="btn btn-ghost" onClick={resetForm}>
-              Batal
+              {t('cancel')}
             </button>
           )}
           <button
@@ -290,41 +300,43 @@ export function ParentTugas({ data, setData }: Props) {
             style={{ opacity: !judul.trim() || !childId ? 0.5 : 1 }}
             onClick={save}
           >
-            {editId ? 'Simpan' : 'Tambah'}
+            {editId ? t('save') : t('add')}
           </button>
         </div>
       </div>
 
       <div>
-        <div className="label">Daftar tugas</div>
+        <div className="label">{t('taskListLabel')}</div>
         <div className="task-list">
           {tasksForChild.length === 0 && (
-            <div className="empty-state">Belum ada tugas</div>
+            <div className="empty-state">{t('noTasks')}</div>
           )}
-          {tasksForChild.map((t) => (
-            <div key={t.id} className="row">
+          {tasksForChild.map((tk) => (
+            <div key={tk.id} className="row">
               <span className="ikon" style={{ fontSize: 28 }}>
-                <EmojiOrImg value={t.ikon} imgSize={36} imgRadius={10} />
+                <EmojiOrImg value={tk.ikon} imgSize={36} imgRadius={10} />
               </span>
               <div className="main">
-                <div className="title-text">{t.judul}</div>
+                <div className="title-text">{tk.judul}</div>
                 <div className="meta">
-                  {JADWAL_ICON[t.jadwal ?? 'setiap-hari']}{' '}
-                  {JADWAL_LABEL[t.jadwal ?? 'setiap-hari']}
-                  {t.jam ? ` · 🕐 ${t.jam}` : ''}
-                  {t.durasiMenit ? ` · ⏱️ ${t.durasiMenit} menit` : ''}
-                  {' · '}+{t.poin} poin
+                  {JADWAL_ICON[tk.jadwal ?? 'setiap-hari']}{' '}
+                  {t(JADWAL_DICT_KEY[tk.jadwal ?? 'setiap-hari'])}
+                  {tk.jam ? ` · 🕐 ${tk.jam}` : ''}
+                  {tk.durasiMenit
+                    ? ` · ⏱️ ${tk.durasiMenit} ${t('minutesShort')}`
+                    : ''}
+                  {' · '}+{tk.poin} {t('pointsShort')}
                 </div>
               </div>
               <div className="row-actions">
-                <button className="icon-btn" onClick={() => startEdit(t)}>
-                  Ubah
+                <button className="icon-btn" onClick={() => startEdit(tk)}>
+                  {t('edit')}
                 </button>
                 <button
                   className="icon-btn reject"
-                  onClick={() => hapus(t.id)}
+                  onClick={() => hapus(tk.id)}
                 >
-                  Hapus
+                  {t('delete')}
                 </button>
               </div>
             </div>

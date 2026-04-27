@@ -4,6 +4,7 @@ import type { AppData } from '../types'
 import { AVATAR_EMOJIS } from '../constants'
 import { PinPad } from '../components/PinPad'
 import { EmojiPickerWithUpload } from '../components/EmojiPickerWithUpload'
+import { useT } from '../i18n'
 
 type Props = {
   data: AppData
@@ -13,6 +14,7 @@ type Props = {
 type Step = 'welcome' | 'pin' | 'pin-confirm' | 'child'
 
 export function Setup({ data, onFinish }: Props) {
+  const t = useT()
   const [step, setStep] = useState<Step>('welcome')
   const [pin, setPin] = useState('')
   const [pinConfirm, setPinConfirm] = useState('')
@@ -43,13 +45,11 @@ export function Setup({ data, onFinish }: Props) {
     return (
       <div className="screen setup">
         <h1 className="screen-title">
-          Halo, Kapten! <span className="emoji">🚀</span>
+          {t('setupWelcomeTitle')} <span className="emoji">🚀</span>
         </h1>
-        <p className="screen-subtitle">
-          Selamat datang di Petualangan Poin. Ayo kita siapkan akunnya dulu.
-        </p>
+        <p className="screen-subtitle">{t('setupWelcomeSub')}</p>
         <button className="btn" onClick={() => setStep('pin')}>
-          Mulai Petualangan
+          {t('setupStart')}
         </button>
       </div>
     )
@@ -58,10 +58,8 @@ export function Setup({ data, onFinish }: Props) {
   if (step === 'pin') {
     return (
       <div className="screen setup">
-        <h2 className="screen-title">Buat PIN Orang Tua</h2>
-        <p className="screen-subtitle">
-          PIN 4 digit untuk orang tua (untuk konfirmasi tugas & atur poin).
-        </p>
+        <h2 className="screen-title">{t('setupCreatePinTitle')}</h2>
+        <p className="screen-subtitle">{t('setupCreatePinSub')}</p>
         <PinPad value={pin} onChange={setPin} />
         <button
           className="btn"
@@ -73,7 +71,7 @@ export function Setup({ data, onFinish }: Props) {
             setStep('pin-confirm')
           }}
         >
-          Lanjut
+          {t('next')}
         </button>
       </div>
     )
@@ -82,8 +80,8 @@ export function Setup({ data, onFinish }: Props) {
   if (step === 'pin-confirm') {
     return (
       <div className="screen setup">
-        <h2 className="screen-title">Ketik Ulang PIN</h2>
-        <p className="screen-subtitle">Pastikan tidak salah ketik.</p>
+        <h2 className="screen-title">{t('setupRetypePinTitle')}</h2>
+        <p className="screen-subtitle">{t('setupRetypePinSub')}</p>
         <PinPad value={pinConfirm} onChange={setPinConfirm} />
         <p className="pin-error">{pinErr}</p>
         <div className="btn-row">
@@ -96,7 +94,7 @@ export function Setup({ data, onFinish }: Props) {
               setStep('pin')
             }}
           >
-            Ganti PIN
+            {t('changePin')}
           </button>
           <button
             className="btn"
@@ -104,14 +102,14 @@ export function Setup({ data, onFinish }: Props) {
             style={{ opacity: pinConfirm.length !== 4 ? 0.5 : 1 }}
             onClick={() => {
               if (pin !== pinConfirm) {
-                setPinErr('PIN tidak sama. Coba lagi.')
+                setPinErr(t('pinMismatch'))
                 setPinConfirm('')
                 return
               }
               setStep('child')
             }}
           >
-            Lanjut
+            {t('next')}
           </button>
         </div>
       </div>
@@ -120,22 +118,20 @@ export function Setup({ data, onFinish }: Props) {
 
   return (
     <div className="screen setup">
-      <h2 className="screen-title">Tambah Anak Pertama</h2>
-      <p className="screen-subtitle">
-        Siapa astronot pertama kita?
-      </p>
+      <h2 className="screen-title">{t('setupAddFirstTitle')}</h2>
+      <p className="screen-subtitle">{t('setupAddFirstSub')}</p>
       <div>
-        <div className="label">Nama</div>
+        <div className="label">{t('fieldName')}</div>
         <input
           className="input"
-          placeholder="Contoh: Adik"
+          placeholder={t('namePlaceholder')}
           value={nama}
           onChange={(e) => setNama(e.target.value)}
           autoFocus
         />
       </div>
       <div>
-        <div className="label">Avatar (foto atau pilih emoji)</div>
+        <div className="label">{t('fieldAvatar')}</div>
         <EmojiPickerWithUpload
           emojis={AVATAR_EMOJIS}
           value={avatar}
@@ -148,7 +144,7 @@ export function Setup({ data, onFinish }: Props) {
         style={{ opacity: !nama.trim() ? 0.5 : 1 }}
         onClick={handleFinish}
       >
-        Selesai — Mulai Main!
+        {t('setupFinish')}
       </button>
     </div>
   )
