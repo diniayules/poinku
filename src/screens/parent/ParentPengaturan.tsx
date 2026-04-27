@@ -9,6 +9,7 @@ import { TEMA_FLOATERS, TEMA_IKON, TEMA_OPSI } from '../../storage'
 import { LANG_FLAG, LANG_LABEL, LANG_OPSI, useT } from '../../i18n'
 import type { DictKey } from '../../i18n/dict'
 import { exportData, importData } from '../../lib/backup'
+import { useDialog } from '../../components/DialogProvider'
 
 const TEMA_LABEL_KEY: Record<Tema, DictKey> = {
   'luar-angkasa': 'temaLuarAngkasa',
@@ -25,6 +26,7 @@ type Props = {
 
 export function ParentPengaturan({ data, setData }: Props) {
   const t = useT()
+  const dialog = useDialog()
   const [formMode, setFormMode] = useState<'closed' | 'add' | 'edit'>(
     'closed',
   )
@@ -79,10 +81,18 @@ export function ParentPengaturan({ data, setData }: Props) {
     tutupForm()
   }
 
-  function hapusAnak(id: string) {
+  async function hapusAnak(id: string) {
     const ch = data.children.find((c) => c.id === id)
     if (!ch) return
-    if (!confirm(t('confirmDeleteChild', { nama: ch.nama }))) return
+    const ok = await dialog.confirm({
+      title: t('dialogConfirmTitle'),
+      message: t('confirmDeleteChild', { nama: ch.nama }),
+      emoji: '🗑️',
+      variant: 'danger',
+      confirmText: t('delete'),
+      cancelText: t('cancel'),
+    })
+    if (!ok) return
     setData({
       ...data,
       children: data.children.filter((c) => c.id !== id),
@@ -107,7 +117,13 @@ export function ParentPengaturan({ data, setData }: Props) {
     setPin2('')
     setPinErr('')
     setPinOpen(false)
-    alert(t('pinChanged'))
+    await dialog.alert({
+      title: t('dialogSuccessTitle'),
+      message: t('pinChanged'),
+      emoji: '🔐',
+      variant: 'success',
+      confirmText: t('ok'),
+    })
   }
 
   function pilihTema(tema: Tema) {
@@ -124,13 +140,33 @@ export function ParentPengaturan({ data, setData }: Props) {
     const file = e.target.files?.[0]
     e.target.value = ''
     if (!file) return
-    if (!confirm(t('restoreConfirm'))) return
+    const ok = await dialog.confirm({
+      title: t('dialogConfirmTitle'),
+      message: t('restoreConfirm'),
+      emoji: '📥',
+      variant: 'info',
+      confirmText: t('restoreBtn'),
+      cancelText: t('cancel'),
+    })
+    if (!ok) return
     try {
       const restored = await importData(file)
       setData(restored)
-      alert(t('restoreDone'))
+      await dialog.alert({
+        title: t('dialogSuccessTitle'),
+        message: t('restoreDone'),
+        emoji: '✅',
+        variant: 'success',
+        confirmText: t('ok'),
+      })
     } catch {
-      alert(t('restoreInvalid'))
+      await dialog.alert({
+        title: t('dialogErrorTitle'),
+        message: t('restoreInvalid'),
+        emoji: '⚠️',
+        variant: 'danger',
+        confirmText: t('ok'),
+      })
     }
   }
 

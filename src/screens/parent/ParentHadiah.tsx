@@ -9,6 +9,7 @@ import { REWARD_ICONS } from '../../constants'
 import { EmojiOrImg } from '../../components/EmojiOrImg'
 import { EmojiPickerWithUpload } from '../../components/EmojiPickerWithUpload'
 import { useT } from '../../i18n'
+import { useDialog } from '../../components/DialogProvider'
 
 const TIPE_OPSI: RewardTipe[] = ['harian', 'mingguan', 'bulanan']
 
@@ -31,6 +32,7 @@ type Props = {
 
 export function ParentHadiah({ data, setData }: Props) {
   const t = useT()
+  const dialog = useDialog()
   const [childId, setChildId] = useState<string>(
     data.children[0]?.id ?? '',
   )
@@ -103,8 +105,16 @@ export function ParentHadiah({ data, setData }: Props) {
     resetForm()
   }
 
-  function hapus(id: string) {
-    if (!confirm(t('confirmDeleteReward'))) return
+  async function hapus(id: string) {
+    const ok = await dialog.confirm({
+      title: t('dialogConfirmTitle'),
+      message: t('confirmDeleteReward'),
+      emoji: '🗑️',
+      variant: 'danger',
+      confirmText: t('delete'),
+      cancelText: t('cancel'),
+    })
+    if (!ok) return
     setData({
       ...data,
       rewards: data.rewards.filter((r) => r.id !== id),

@@ -7,6 +7,7 @@ import { ChildDashboard } from './screens/ChildDashboard'
 import { PinGate } from './screens/PinGate'
 import { ParentMode } from './screens/ParentMode'
 import { LangProvider, useT } from './i18n'
+import { DialogProvider } from './components/DialogProvider'
 import './App.css'
 
 export type ParentTab =
@@ -42,7 +43,8 @@ function App() {
 
   return (
     <LangProvider value={data.bahasa}>
-      <Floaters tema={data.tema} />
+      <DialogProvider>
+        <Floaters tema={data.tema} />
       <div className="app">
         <Header tema={data.tema} />
         {needsSetup ? (
@@ -90,7 +92,8 @@ function App() {
             )}
           </>
         )}
-      </div>
+        </div>
+      </DialogProvider>
     </LangProvider>
   )
 }

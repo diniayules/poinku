@@ -3,6 +3,7 @@ import type { AppData, Adjustment } from '../../types'
 import { todayKey, uid } from '../../storage'
 import { EmojiOrImg } from '../../components/EmojiOrImg'
 import { useT } from '../../i18n'
+import { useDialog } from '../../components/DialogProvider'
 
 type Props = {
   data: AppData
@@ -11,6 +12,7 @@ type Props = {
 
 export function ParentSesuaikan({ data, setData }: Props) {
   const t = useT()
+  const dialog = useDialog()
   const [childId, setChildId] = useState<string>(data.children[0]?.id ?? '')
   const [tipe, setTipe] = useState<'plus' | 'minus'>('plus')
   const [jumlah, setJumlah] = useState(5)
@@ -43,6 +45,30 @@ export function ParentSesuaikan({ data, setData }: Props) {
         : t('subtractedFromChild', { n: jumlah }),
     )
     setTimeout(() => setPesan(''), 2500)
+  }
+
+  async function hapusAdjustment(id: string) {
+    const adj = data.adjustments.find((a) => a.id === id)
+    if (!adj) return
+    const ok = await dialog.confirm({
+      title: t('dialogConfirmTitle'),
+      message: t('confirmDeleteAdjustment'),
+      emoji: '🗑️',
+      variant: 'danger',
+      confirmText: t('delete'),
+      cancelText: t('cancel'),
+    })
+    if (!ok) return
+    const children = data.children.map((c) =>
+      c.id === adj.childId
+        ? { ...c, totalPoin: c.totalPoin - adj.poin }
+        : c,
+    )
+    setData({
+      ...data,
+      adjustments: data.adjustments.filter((a) => a.id !== id),
+      children,
+    })
   }
 
   const child = data.children.find((c) => c.id === childId)
@@ -161,6 +187,13 @@ export function ParentSesuaikan({ data, setData }: Props) {
                 >
                   {a.poin > 0 ? `+${a.poin}` : a.poin}
                 </span>
+                <button
+                  className="icon-btn reject"
+                  onClick={() => hapusAdjustment(a.id)}
+                  aria-label={t('delete')}
+                >
+                  🗑️
+                </button>
               </div>
             ))}
           {data.adjustments.filter((a) => a.childId === childId).length ===

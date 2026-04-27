@@ -299,6 +299,14 @@ export const dict = {
     id: 'Belum ada penyesuaian',
     en: 'No adjustments yet',
   },
+  confirmDeleteAdjustment: {
+    id: 'Hapus penyesuaian ini? Poin akan dikembalikan.',
+    en: 'Delete this adjustment? Points will be reverted.',
+  },
+  dialogConfirmTitle: { id: 'Konfirmasi', en: 'Confirm' },
+  dialogSuccessTitle: { id: 'Berhasil', en: 'Success' },
+  dialogErrorTitle: { id: 'Gagal', en: 'Failed' },
+  ok: { id: 'OK', en: 'OK' },
 
   // Pengaturan
   themeLabel: { id: 'Tema', en: 'Theme' },

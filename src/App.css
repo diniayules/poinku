@@ -1652,6 +1652,134 @@
   flex-shrink: 0;
 }
 
+/* Dialog (confirm / alert) */
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(11, 11, 42, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.dialog {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(
+    135deg,
+    rgba(46, 27, 122, 0.95),
+    rgba(26, 20, 82, 0.95)
+  );
+  border: 2px solid rgba(155, 77, 255, 0.5);
+  border-radius: 24px;
+  padding: 26px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dialog-danger {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 138, 0.25),
+    rgba(46, 27, 122, 0.95)
+  );
+  border-color: rgba(255, 107, 138, 0.5);
+}
+
+.dialog-success {
+  background: linear-gradient(
+    135deg,
+    rgba(107, 255, 158, 0.25),
+    rgba(46, 27, 122, 0.95)
+  );
+  border-color: rgba(107, 255, 158, 0.5);
+}
+
+.dialog-info {
+  background: linear-gradient(
+    135deg,
+    rgba(77, 208, 255, 0.25),
+    rgba(46, 27, 122, 0.95)
+  );
+  border-color: rgba(77, 208, 255, 0.5);
+}
+
+.dialog-emoji {
+  font-size: 56px;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+  animation: wiggle 2s ease-in-out infinite;
+  line-height: 1;
+}
+
+.dialog-title {
+  font-family: var(--display);
+  font-size: 22px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text);
+  margin: 0;
+}
+
+.dialog-msg {
+  color: var(--text);
+  line-height: 1.5;
+  font-size: 16px;
+  margin: 0;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.dialog-actions > * {
+  flex: 1;
+}
+
+:root[data-tema='ceria'] .dialog {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.97),
+    rgba(255, 245, 248, 0.97)
+  );
+  border-color: rgba(127, 88, 175, 0.4);
+}
+
+:root[data-tema='ceria'] .dialog-danger {
+  background: linear-gradient(
+    135deg,
+    rgba(232, 77, 138, 0.18),
+    rgba(255, 255, 255, 0.95)
+  );
+}
+
+:root[data-tema='ceria'] .dialog-success {
+  background: linear-gradient(
+    135deg,
+    rgba(77, 201, 122, 0.18),
+    rgba(255, 255, 255, 0.95)
+  );
+}
+
+:root[data-tema='ceria'] .dialog-info {
+  background: linear-gradient(
+    135deg,
+    rgba(100, 197, 235, 0.2),
+    rgba(255, 255, 255, 0.95)
+  );
+}
+
 /* Celebration modal */
 .celebration-overlay {
   position: fixed;

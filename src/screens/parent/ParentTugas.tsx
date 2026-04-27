@@ -9,6 +9,7 @@ import { TASK_ICONS } from '../../constants'
 import { EmojiPickerWithUpload } from '../../components/EmojiPickerWithUpload'
 import { EmojiOrImg } from '../../components/EmojiOrImg'
 import { useT } from '../../i18n'
+import { useDialog } from '../../components/DialogProvider'
 
 const JADWAL_OPSI: Jadwal[] = ['setiap-hari', 'hari-sekolah', 'akhir-pekan']
 
@@ -31,6 +32,7 @@ type Props = {
 
 export function ParentTugas({ data, setData }: Props) {
   const t = useT()
+  const dialog = useDialog()
   const [childId, setChildId] = useState<string>(
     data.children[0]?.id ?? '',
   )
@@ -125,8 +127,16 @@ export function ParentTugas({ data, setData }: Props) {
     resetForm()
   }
 
-  function hapus(id: string) {
-    if (!confirm(t('confirmDeleteTask'))) return
+  async function hapus(id: string) {
+    const ok = await dialog.confirm({
+      title: t('dialogConfirmTitle'),
+      message: t('confirmDeleteTask'),
+      emoji: '🗑️',
+      variant: 'danger',
+      confirmText: t('delete'),
+      cancelText: t('cancel'),
+    })
+    if (!ok) return
     setData({
       ...data,
       tasks: data.tasks.filter((tk) => tk.id !== id),
