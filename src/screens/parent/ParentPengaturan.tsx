@@ -325,11 +325,19 @@ export function ParentPengaturan({ data, setData }: Props) {
         ) : (
           <div className="card form">
             <div className="label">{t('pinNew')}</div>
-            <PinPad value={pin1} onChange={setPin1} />
+            <PinPad
+              value={pin1}
+              onChange={setPin1}
+              active={pin1.length < 4}
+            />
             <div className="label" style={{ marginTop: 8 }}>
               {t('pinRetype')}
             </div>
-            <PinPad value={pin2} onChange={setPin2} />
+            <PinPad
+              value={pin2}
+              onChange={setPin2}
+              active={pin1.length === 4}
+            />
             <p className="pin-error">{pinErr}</p>
             <div className="btn-row">
               <button

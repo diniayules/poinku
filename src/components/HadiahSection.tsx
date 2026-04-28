@@ -140,6 +140,11 @@ export function HadiahSection({ data, childId, setData }: Props) {
                           {t('rewardWaiting')}
                         </div>
                       )}
+                      {claimedThis?.status === 'disetujui' && (
+                        <div className="status-text disetujui">
+                          {t('rewardApproved')}
+                        </div>
+                      )}
                       {claimedThis?.status === 'diberikan' && (
                         <div className="status-text disetujui">
                           {t('rewardGiven')}

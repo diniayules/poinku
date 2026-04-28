@@ -43,6 +43,8 @@ export function ParentTugas({ data, setData }: Props) {
   const [jam, setJam] = useState('')
   const [durasi, setDurasi] = useState<number | ''>('')
   const [jadwal, setJadwal] = useState<Jadwal>('setiap-hari')
+  const [varianA, setVarianA] = useState('')
+  const [varianB, setVarianB] = useState('')
   const [showSuggest, setShowSuggest] = useState(false)
   const [selectMode, setSelectMode] = useState(false)
   const [selected, setSelected] = useState<Set<string>>(new Set())
@@ -99,6 +101,8 @@ export function ParentTugas({ data, setData }: Props) {
     setJam(tk.jam ?? '')
     setDurasi(tk.durasiMenit ?? '')
     setJadwal(tk.jadwal ?? 'setiap-hari')
+    setVarianA(tk.varian?.[0] ?? '')
+    setVarianB(tk.varian?.[1] ?? '')
     setShowSuggest(false)
   }
 
@@ -110,6 +114,8 @@ export function ParentTugas({ data, setData }: Props) {
     setJam('')
     setDurasi('')
     setJadwal('setiap-hari')
+    setVarianA('')
+    setVarianB('')
   }
 
   function startEdit(tk: Task) {
@@ -120,6 +126,8 @@ export function ParentTugas({ data, setData }: Props) {
     setJam(tk.jam ?? '')
     setDurasi(tk.durasiMenit ?? '')
     setJadwal(tk.jadwal ?? 'setiap-hari')
+    setVarianA(tk.varian?.[0] ?? '')
+    setVarianB(tk.varian?.[1] ?? '')
     setChildId(tk.childId)
   }
 
@@ -128,6 +136,10 @@ export function ParentTugas({ data, setData }: Props) {
     const jamValue = jam.trim() || undefined
     const durasiValue =
       typeof durasi === 'number' && durasi > 0 ? durasi : undefined
+    const varianValue =
+      varianA.trim() && varianB.trim()
+        ? [varianA.trim(), varianB.trim()]
+        : undefined
     if (editId) {
       setData({
         ...data,
@@ -142,6 +154,7 @@ export function ParentTugas({ data, setData }: Props) {
                 jam: jamValue,
                 durasiMenit: durasiValue,
                 jadwal,
+                varian: varianValue,
               }
             : tk,
         ),
@@ -156,6 +169,7 @@ export function ParentTugas({ data, setData }: Props) {
         jam: jamValue,
         durasiMenit: durasiValue,
         jadwal,
+        varian: varianValue,
       }
       setData({ ...data, tasks: [...data.tasks, task] })
     }
@@ -332,6 +346,26 @@ export function ParentTugas({ data, setData }: Props) {
             onChange={setIkon}
             columns={9}
           />
+        </div>
+        <div>
+          <div className="label">{t('variantLabel')}</div>
+          <div className="form-row">
+            <input
+              className="input"
+              placeholder={t('variantPlaceholderA')}
+              value={varianA}
+              onChange={(e) => setVarianA(e.target.value)}
+            />
+            <input
+              className="input"
+              placeholder={t('variantPlaceholderB')}
+              value={varianB}
+              onChange={(e) => setVarianB(e.target.value)}
+            />
+          </div>
+          <p className="usul-hint" style={{ marginTop: 6 }}>
+            {t('variantHint')}
+          </p>
         </div>
         <div className="btn-row">
           {editId && (

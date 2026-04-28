@@ -191,7 +191,28 @@ export const dict = {
     id: '⏳ Menunggu konfirmasi orang tua',
     en: '⏳ Waiting for parent confirmation',
   },
+  rewardApproved: {
+    id: '✨ Disetujui — menunggu diberikan',
+    en: '✨ Approved — pending delivery',
+  },
   rewardGiven: { id: '🎉 Sudah diberikan!', en: '🎉 Given!' },
+  pendingDeliveryTitle: {
+    id: 'Hadiah Belum Diberikan',
+    en: 'Rewards Pending Delivery',
+  },
+  pendingDeliveryHint: {
+    id: 'Hadiah ini sudah disetujui. Berikan ke anak, lalu tap "Sudah Diberikan". Tap "Tunda ke Besok" jika ingin diakumulasi.',
+    en: 'These rewards are approved. Give them to the child, then tap "Mark as Given". Tap "Defer to Tomorrow" to accumulate.',
+  },
+  markGivenBtn: { id: '✓ Sudah Diberikan', en: '✓ Mark as Given' },
+  deferToTomorrow: {
+    id: '📦 Tunda ke Besok',
+    en: '📦 Defer to Tomorrow',
+  },
+  deferredUntil: {
+    id: '📅 Ditunda sampai {tanggal}',
+    en: '📅 Deferred until {tanggal}',
+  },
   rewardCelebrationTitle: {
     id: 'HADIAH TERSEDIA!',
     en: 'REWARD AVAILABLE!',
@@ -212,6 +233,19 @@ export const dict = {
   finishedAt: { id: 'Selesai pukul {jam}', en: 'Finished at {jam}' },
   lateBy: { id: '⚠️ Lewat {n} menit', en: '⚠️ {n} min late' },
   onTime: { id: '✓ Tepat waktu', en: '✓ On time' },
+  awardFull: {
+    id: '🪙 Akan diberikan: +{n} poin (penuh)',
+    en: '🪙 Will award: +{n} points (full)',
+  },
+  awardPartial: {
+    id: '🪙 Akan diberikan: +{n} poin ({pct}% karena terlambat)',
+    en: '🪙 Will award: +{n} points ({pct}% due to lateness)',
+  },
+  awardZero: {
+    id: '🪙 Tidak dapat poin (terlambat lebih dari {limit} menit)',
+    en: '🪙 No points (more than {limit} min late)',
+  },
+  approveWith: { id: '✓ Setuju +{n}', en: '✓ Approve +{n}' },
   pointsAt: { id: 'poin {periode} saat itu', en: '{periode} points then' },
   rewardClaimBadge: { id: 'Klaim Hadiah', en: 'Reward Claim' },
   claimedAt: { id: 'Diklaim pukul {jam}', en: 'Claimed at {jam}' },
@@ -232,6 +266,29 @@ export const dict = {
     id: 'Contoh: Gosok gigi',
     en: 'e.g. Brush teeth',
   },
+  variantLabel: {
+    id: 'Pilihan saat selesai (opsional)',
+    en: 'Choices when done (optional)',
+  },
+  variantA: { id: 'Pilihan A', en: 'Choice A' },
+  variantB: { id: 'Pilihan B', en: 'Choice B' },
+  variantPlaceholderA: {
+    id: 'Misal: Bangun sendiri',
+    en: 'e.g. Got up alone',
+  },
+  variantPlaceholderB: {
+    id: 'Misal: Dibangunkan',
+    en: 'e.g. Was woken up',
+  },
+  variantHint: {
+    id: 'Anak akan memilih salah satu saat mencentang. Berguna untuk pertimbangan bonus poin orang tua.',
+    en: 'Child picks one when checking off. Useful for parent to decide bonus points.',
+  },
+  pickerTitle: {
+    id: 'Bagaimana kamu mengerjakannya?',
+    en: 'How did you do it?',
+  },
+  chosenVariant: { id: 'Pilihan: {varian}', en: 'Choice: {varian}' },
   taskJam: { id: 'Jam', en: 'Time' },
   taskJamOpt: { id: 'Jam (opsional)', en: 'Time (optional)' },
   taskDurasi: { id: 'Durasi (menit)', en: 'Duration (min)' },

@@ -4,7 +4,7 @@ import type { ParentTab } from '../App'
 import { EmojiOrImg } from '../components/EmojiOrImg'
 import { useT } from '../i18n'
 import type { DictKey } from '../i18n/dict'
-import { TEMA_HOME_EMOJI, TEMA_HOME_TITLE_KEY } from '../storage'
+import { TEMA_HOME_EMOJI, TEMA_HOME_TITLE_KEY, todayKey } from '../storage'
 
 type Props = {
   data: AppData
@@ -56,10 +56,16 @@ export function Home({ data, onPickChild, onPickParentTab }: Props) {
   const t = useT()
   const [menuOpen, setMenuOpen] = useState(false)
 
+  const today = todayKey()
   const pendingCount =
     data.completions.filter((c) => c.status === 'menunggu').length +
     data.proposals.filter((p) => p.status === 'menunggu').length +
-    data.rewardClaims.filter((r) => r.status === 'menunggu').length
+    data.rewardClaims.filter((r) => r.status === 'menunggu').length +
+    data.rewardClaims.filter(
+      (r) =>
+        r.status === 'disetujui' &&
+        (!r.tundaSampai || r.tundaSampai <= today),
+    ).length
 
   return (
     <>

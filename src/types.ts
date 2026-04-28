@@ -16,6 +16,7 @@ export type Task = {
   jam?: string
   durasiMenit?: number
   jadwal?: Jadwal
+  varian?: string[]
 }
 
 export type CompletionStatus = 'menunggu' | 'disetujui' | 'ditolak'
@@ -28,6 +29,7 @@ export type Completion = {
   selesaiPada: string
   status: CompletionStatus
   poinSaatDisetujui?: number
+  varianDipilih?: string
 }
 
 export type Adjustment = {
@@ -59,7 +61,11 @@ export type Reward = {
   tipe: RewardTipe
 }
 
-export type RewardClaimStatus = 'menunggu' | 'diberikan' | 'ditolak'
+export type RewardClaimStatus =
+  | 'menunggu'
+  | 'disetujui'
+  | 'diberikan'
+  | 'ditolak'
 
 export type RewardClaim = {
   id: string
@@ -71,6 +77,7 @@ export type RewardClaim = {
   hargaSaatItu: number
   poinPeriodeSaatItu: number
   status: RewardClaimStatus
+  tundaSampai?: string
 }
 
 export type Tema =

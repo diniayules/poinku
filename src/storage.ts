@@ -83,6 +83,12 @@ export const JADWAL_ICON: Record<Jadwal, string> = {
   'akhir-pekan': '🏖️',
 }
 
+export function tomorrowKey(d: Date = new Date()): string {
+  const t = new Date(d)
+  t.setDate(t.getDate() + 1)
+  return todayKey(t)
+}
+
 export function todayKey(d: Date = new Date()): string {
   const y = d.getFullYear()
   const m = String(d.getMonth() + 1).padStart(2, '0')
@@ -102,13 +108,30 @@ export function hitungLewat(
   durasiMenit: number | undefined,
   selesaiPada: string,
 ): number | null {
-  if (!jam || !durasiMenit) return null
+  if (!jam) return null
   const selesai = new Date(selesaiPada)
   const [h, m] = jam.split(':').map(Number)
   const batas = new Date(selesai)
-  batas.setHours(h, m + durasiMenit, 0, 0)
+  batas.setHours(h, m + (durasiMenit ?? 0), 0, 0)
   const diffMenit = Math.round((selesai.getTime() - batas.getTime()) / 60000)
   return diffMenit
+}
+
+export const POIN_LATE_PARTIAL_LIMIT = 5
+export const POIN_LATE_PARTIAL_PCT = 70
+
+export function persenPoinDariLewat(lewatMenit: number | null): number {
+  if (lewatMenit === null || lewatMenit <= 0) return 100
+  if (lewatMenit <= POIN_LATE_PARTIAL_LIMIT) return POIN_LATE_PARTIAL_PCT
+  return 0
+}
+
+export function hitungPoinAktual(
+  poinPenuh: number,
+  lewatMenit: number | null,
+): number {
+  const pct = persenPoinDariLewat(lewatMenit)
+  return Math.round((poinPenuh * pct) / 100)
 }
 
 export const TEMA_LABEL: Record<Tema, string> = {

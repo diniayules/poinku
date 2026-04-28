@@ -17,6 +17,7 @@ export function ChildDashboard({ data, childId, setData, onBack }: Props) {
   const t = useT()
   const [usulOpen, setUsulOpen] = useState(false)
   const [usulJudul, setUsulJudul] = useState('')
+  const [pickingTaskId, setPickingTaskId] = useState<string | null>(null)
 
   const child = data.children.find((c) => c.id === childId)
   if (!child) return null
@@ -52,9 +53,17 @@ export function ChildDashboard({ data, childId, setData, onBack }: Props) {
         c.taskId === taskId && c.tanggal === today && c.status !== 'ditolak',
     )
 
-  function markDone(taskId: string) {
+  function markDone(taskId: string, varianDipilih?: string) {
     const existing = findCompletion(taskId)
-    if (existing) return
+    if (existing) {
+      setPickingTaskId(null)
+      return
+    }
+    const task = data.tasks.find((t2) => t2.id === taskId)
+    if (task?.varian && task.varian.length === 2 && !varianDipilih) {
+      setPickingTaskId(taskId)
+      return
+    }
     const completion: Completion = {
       id: uid(),
       taskId,
@@ -62,12 +71,18 @@ export function ChildDashboard({ data, childId, setData, onBack }: Props) {
       tanggal: today,
       selesaiPada: new Date().toISOString(),
       status: 'menunggu',
+      varianDipilih,
     }
     setData({
       ...data,
       completions: [...data.completions, completion],
     })
+    setPickingTaskId(null)
   }
+
+  const pickingTask = pickingTaskId
+    ? data.tasks.find((tk) => tk.id === pickingTaskId)
+    : null
 
   function kirimUsul() {
     if (!usulJudul.trim()) return
@@ -103,17 +118,19 @@ export function ChildDashboard({ data, childId, setData, onBack }: Props) {
         </div>
       </div>
 
-      <h3 className="dash-section-title">
-        {t('todaysTasks')}
-        <span className="badge-hari">
-          {weekendNow ? `🏖️ ${t('weekend')}` : `🎒 ${t('schoolDay')}`}
-        </span>
-      </h3>
-      <div className="task-list">
-        {tasks.length === 0 && proposalsHariIni.length === 0 && (
-          <div className="empty-state">{t('noTasksToday')}</div>
-        )}
-        {tasks.map((task) => {
+      <div className="dash-columns">
+        <div className="dash-col">
+          <h3 className="dash-section-title">
+            {t('todaysTasks')}
+            <span className="badge-hari">
+              {weekendNow ? `🏖️ ${t('weekend')}` : `🎒 ${t('schoolDay')}`}
+            </span>
+          </h3>
+          <div className="task-list">
+            {tasks.length === 0 && proposalsHariIni.length === 0 && (
+              <div className="empty-state">{t('noTasksToday')}</div>
+            )}
+            {tasks.map((task) => {
           const comp = findCompletion(task.id)
           const status = comp?.status
           const disabled = !!comp
@@ -154,6 +171,11 @@ export function ChildDashboard({ data, childId, setData, onBack }: Props) {
                       `⏱️ ${task.durasiMenit} ${t('minutesShort')}`}
                   </span>
                 )}
+                {comp?.varianDipilih && (
+                  <span className="varian-badge">
+                    ✨ {comp.varianDipilih}
+                  </span>
+                )}
                 {status === 'menunggu' && (
                   <span className="status-text menunggu">
                     {t('waitingParent')}
@@ -169,85 +191,129 @@ export function ChildDashboard({ data, childId, setData, onBack }: Props) {
           )
         })}
 
-        {proposalsHariIni.map((p) => {
-          const status = p.status
-          return (
-            <div key={p.id} className={`task-item ${status}`}>
-              <span
-                className={`checkbox checked ${
-                  status === 'disetujui' ? 'approved' : ''
-                }`}
-                aria-hidden="true"
-              >
-                <span className="check">✓</span>
-              </span>
-              <span className="task-body">
-                <span className="judul-row">
-                  <span className="ikon">✨</span>
-                  <span className="judul-teks">{p.judul}</span>
-                  <span className="badge-usul">{t('proposalBadge')}</span>
-                </span>
-                {status === 'menunggu' && (
-                  <span className="status-text menunggu">
-                    {t('waitingPointSet')}
+            {proposalsHariIni.map((p) => {
+              const status = p.status
+              return (
+                <div key={p.id} className={`task-item ${status}`}>
+                  <span
+                    className={`checkbox checked ${
+                      status === 'disetujui' ? 'approved' : ''
+                    }`}
+                    aria-hidden="true"
+                  >
+                    <span className="check">✓</span>
                   </span>
-                )}
-                {status === 'disetujui' && (
-                  <span className="status-text disetujui">
-                    {t('approvedPoints', { poin: p.poin ?? 0 })}
+                  <span className="task-body">
+                    <span className="judul-row">
+                      <span className="ikon">✨</span>
+                      <span className="judul-teks">{p.judul}</span>
+                      <span className="badge-usul">
+                        {t('proposalBadge')}
+                      </span>
+                    </span>
+                    {status === 'menunggu' && (
+                      <span className="status-text menunggu">
+                        {t('waitingPointSet')}
+                      </span>
+                    )}
+                    {status === 'disetujui' && (
+                      <span className="status-text disetujui">
+                        {t('approvedPoints', { poin: p.poin ?? 0 })}
+                      </span>
+                    )}
                   </span>
-                )}
-              </span>
+                </div>
+              )
+            })}
+          </div>
+
+          {!usulOpen ? (
+            <button
+              className="btn-usul"
+              onClick={() => setUsulOpen(true)}
+              type="button"
+            >
+              {t('addExtraTask')}
+            </button>
+          ) : (
+            <div className="card form usul-form">
+              <div className="label">{t('extraTaskLabel')}</div>
+              <input
+                className="input"
+                autoFocus
+                placeholder={t('extraTaskPlaceholder')}
+                value={usulJudul}
+                onChange={(e) => setUsulJudul(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') kirimUsul()
+                }}
+              />
+              <p className="usul-hint">{t('extraTaskHint')}</p>
+              <div className="btn-row">
+                <button
+                  className="btn btn-ghost"
+                  onClick={() => {
+                    setUsulOpen(false)
+                    setUsulJudul('')
+                  }}
+                >
+                  {t('cancel')}
+                </button>
+                <button
+                  className="btn"
+                  disabled={!usulJudul.trim()}
+                  style={{ opacity: !usulJudul.trim() ? 0.5 : 1 }}
+                  onClick={kirimUsul}
+                >
+                  {t('sendToParent')}
+                </button>
+              </div>
             </div>
-          )
-        })}
+          )}
+        </div>
+
+        <div className="dash-col">
+          <HadiahSection data={data} childId={childId} setData={setData} />
+        </div>
       </div>
 
-      {!usulOpen ? (
-        <button
-          className="btn-usul"
-          onClick={() => setUsulOpen(true)}
-          type="button"
+      {pickingTask?.varian && (
+        <div
+          className="picker-overlay"
+          onClick={() => setPickingTaskId(null)}
         >
-          {t('addExtraTask')}
-        </button>
-      ) : (
-        <div className="card form usul-form">
-          <div className="label">{t('extraTaskLabel')}</div>
-          <input
-            className="input"
-            autoFocus
-            placeholder={t('extraTaskPlaceholder')}
-            value={usulJudul}
-            onChange={(e) => setUsulJudul(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') kirimUsul()
-            }}
-          />
-          <p className="usul-hint">{t('extraTaskHint')}</p>
-          <div className="btn-row">
+          <div
+            className="picker-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="picker-emoji">
+              <EmojiOrImg value={pickingTask.ikon} imgSize={56} imgRadius={14} />
+            </div>
+            <h3 className="picker-title">{t('pickerTitle')}</h3>
+            <p className="picker-task-name">{pickingTask.judul}</p>
+            <div className="picker-options">
+              {pickingTask.varian.map((v, i) => (
+                <button
+                  key={v}
+                  className={`picker-option picker-option-${
+                    i === 0 ? 'a' : 'b'
+                  }`}
+                  onClick={() => markDone(pickingTask.id, v)}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
             <button
               className="btn btn-ghost"
-              onClick={() => {
-                setUsulOpen(false)
-                setUsulJudul('')
-              }}
+              onClick={() => setPickingTaskId(null)}
             >
               {t('cancel')}
-            </button>
-            <button
-              className="btn"
-              disabled={!usulJudul.trim()}
-              style={{ opacity: !usulJudul.trim() ? 0.5 : 1 }}
-              onClick={kirimUsul}
-            >
-              {t('sendToParent')}
             </button>
           </div>
         </div>
       )}
 
-      <HadiahSection data={data} childId={childId} setData={setData} />
       <RewardCelebration data={data} childId={childId} setData={setData} />
     </div>
   )

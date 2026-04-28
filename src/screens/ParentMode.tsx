@@ -7,6 +7,7 @@ import { ParentHadiah } from './parent/ParentHadiah'
 import { ParentSesuaikan } from './parent/ParentSesuaikan'
 import { ParentPengaturan } from './parent/ParentPengaturan'
 import { useT } from '../i18n'
+import { todayKey } from '../storage'
 
 type Props = {
   data: AppData
@@ -23,10 +24,16 @@ export function ParentMode({
 }: Props) {
   const t = useT()
   const [tab, setTab] = useState<ParentTab>(initialTab)
+  const today = todayKey()
   const pending =
     data.completions.filter((c) => c.status === 'menunggu').length +
     data.proposals.filter((p) => p.status === 'menunggu').length +
-    data.rewardClaims.filter((r) => r.status === 'menunggu').length
+    data.rewardClaims.filter((r) => r.status === 'menunggu').length +
+    data.rewardClaims.filter(
+      (r) =>
+        r.status === 'disetujui' &&
+        (!r.tundaSampai || r.tundaSampai <= today),
+    ).length
 
   return (
     <div className="screen">
