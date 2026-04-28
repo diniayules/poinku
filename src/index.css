@@ -99,6 +99,31 @@
   --planet-color-6: #ffb6e6;
 }
 
+:root[data-tema='spongebob'] {
+  --space-deep: #fffbe0;
+  --space-mid: #e3f7fa;
+  --space-light: #ffffff;
+  --nebula-pink: #ff80ab;
+  --nebula-purple: #ba68c8;
+  --nebula-cyan: #4dd0e1;
+  --star: #ffc107;
+  --text: #1a3d52;
+  --text-dim: #4d7791;
+  --success: #4dc97a;
+  --danger: #ef5350;
+  --gold: #ffb300;
+  --bg-glow-1: rgba(255, 203, 5, 0.28);
+  --bg-glow-2: rgba(77, 208, 225, 0.28);
+  --bg-glow-3: rgba(255, 128, 171, 0.22);
+  --bg-base: linear-gradient(180deg, #e3f7fa 0%, #fffbe0 60%, #ffe9b3 100%);
+  --planet-color-1: #ffd54f;
+  --planet-color-2: #ff80ab;
+  --planet-color-3: #4dd0e1;
+  --planet-color-4: #ba68c8;
+  --planet-color-5: #ff8a65;
+  --planet-color-6: #aed581;
+}
+
 :root[data-tema='ceria'] {
   --space-deep: #fff8f0;
   --space-mid: #ffeaf2;
@@ -207,7 +232,8 @@ body::after {
 :root[data-tema='hutan'] body::before,
 :root[data-tema='bawah-laut'] body::before,
 :root[data-tema='permen'] body::before,
-:root[data-tema='ceria'] body::before {
+:root[data-tema='ceria'] body::before,
+:root[data-tema='spongebob'] body::before {
   display: none;
 }
 
@@ -216,7 +242,8 @@ body::after {
   filter: blur(2px);
 }
 
-:root[data-tema='ceria'] body::after {
+:root[data-tema='ceria'] body::after,
+:root[data-tema='spongebob'] body::after {
   opacity: 0.35;
   filter: blur(2px);
 }
@@ -224,6 +251,11 @@ body::after {
 :root[data-tema='ceria'] .floaters span {
   opacity: 0.55;
   filter: drop-shadow(0 4px 10px rgba(127, 88, 175, 0.25));
+}
+
+:root[data-tema='spongebob'] .floaters span {
+  opacity: 0.6;
+  filter: drop-shadow(0 4px 10px rgba(26, 61, 82, 0.3));
 }
 
 @keyframes twinkle {
@@ -471,7 +503,35 @@ input {
   backdrop-filter: blur(10px);
 }
 
-/* Tema ceria: surface override */
+/* Tema light (ceria & spongebob): surface override */
+:root[data-tema='ceria'] .card,
+:root[data-tema='ceria'] .row,
+:root[data-tema='ceria'] .input,
+:root[data-tema='ceria'] .tab,
+:root[data-tema='ceria'] .checkbox,
+:root[data-tema='ceria'] .icon-btn,
+:root[data-tema='ceria'] .back-btn,
+:root[data-tema='ceria'] .pin-pad button,
+:root[data-tema='ceria'] .emoji-picker button,
+:root[data-tema='ceria'] .select-chip,
+:root[data-tema='ceria'] .hadiah-progress,
+:root[data-tema='ceria'] .hadiah-item,
+:root[data-tema='spongebob'] .card,
+:root[data-tema='spongebob'] .row,
+:root[data-tema='spongebob'] .input,
+:root[data-tema='spongebob'] .tab,
+:root[data-tema='spongebob'] .checkbox,
+:root[data-tema='spongebob'] .icon-btn,
+:root[data-tema='spongebob'] .back-btn,
+:root[data-tema='spongebob'] .pin-pad button,
+:root[data-tema='spongebob'] .emoji-picker button,
+:root[data-tema='spongebob'] .select-chip,
+:root[data-tema='spongebob'] .hadiah-progress,
+:root[data-tema='spongebob'] .hadiah-item {
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--text);
+}
+
 :root[data-tema='ceria'] .card,
 :root[data-tema='ceria'] .row,
 :root[data-tema='ceria'] .input,
@@ -484,9 +544,22 @@ input {
 :root[data-tema='ceria'] .select-chip,
 :root[data-tema='ceria'] .hadiah-progress,
 :root[data-tema='ceria'] .hadiah-item {
-  background: rgba(255, 255, 255, 0.7);
   border-color: rgba(127, 88, 175, 0.18);
-  color: var(--text);
+}
+
+:root[data-tema='spongebob'] .card,
+:root[data-tema='spongebob'] .row,
+:root[data-tema='spongebob'] .input,
+:root[data-tema='spongebob'] .tab,
+:root[data-tema='spongebob'] .checkbox,
+:root[data-tema='spongebob'] .icon-btn,
+:root[data-tema='spongebob'] .back-btn,
+:root[data-tema='spongebob'] .pin-pad button,
+:root[data-tema='spongebob'] .emoji-picker button,
+:root[data-tema='spongebob'] .select-chip,
+:root[data-tema='spongebob'] .hadiah-progress,
+:root[data-tema='spongebob'] .hadiah-item {
+  border-color: rgba(255, 179, 0, 0.3);
 }
 
 :root[data-tema='ceria'] .input {
@@ -671,6 +744,371 @@ input {
 
 :root[data-tema='ceria'] h1,
 :root[data-tema='ceria'] h2,
-:root[data-tema='ceria'] h3 {
+:root[data-tema='ceria'] h3,
+:root[data-tema='spongebob'] h1,
+:root[data-tema='spongebob'] h2,
+:root[data-tema='spongebob'] h3 {
   text-shadow: none;
+}
+
+/* Tema spongebob: surface tweak */
+:root[data-tema='spongebob'] .input {
+  border-width: 2px;
+  border-color: rgba(77, 208, 225, 0.5);
+}
+
+:root[data-tema='spongebob'] .input:focus {
+  border-color: var(--nebula-pink);
+}
+
+:root[data-tema='spongebob'] .pin-dot {
+  background: rgba(77, 208, 225, 0.3);
+}
+
+:root[data-tema='spongebob'] .pin-dot.filled {
+  background: var(--nebula-pink);
+  box-shadow: 0 0 12px var(--nebula-pink);
+}
+
+:root[data-tema='spongebob'] .tab.active {
+  background: rgba(255, 179, 0, 0.3);
+  border-color: var(--gold);
+  color: var(--text);
+}
+
+:root[data-tema='spongebob'] .select-chip.active {
+  background: rgba(255, 179, 0, 0.3);
+  border-color: var(--gold);
+}
+
+:root[data-tema='spongebob'] .task-item {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.85),
+    rgba(77, 208, 225, 0.15)
+  );
+  border-color: rgba(77, 208, 225, 0.4);
+  box-shadow: 0 6px 18px rgba(26, 61, 82, 0.1);
+}
+
+:root[data-tema='spongebob'] .task-item.menunggu {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 179, 0, 0.25),
+    rgba(255, 213, 79, 0.18)
+  );
+  border-color: rgba(255, 179, 0, 0.6);
+}
+
+:root[data-tema='spongebob'] .task-item.disetujui {
+  background: linear-gradient(
+    135deg,
+    rgba(77, 201, 122, 0.2),
+    rgba(77, 208, 225, 0.15)
+  );
+  border-color: rgba(77, 201, 122, 0.5);
+}
+
+:root[data-tema='spongebob'] .dash-header {
+  background: linear-gradient(
+    135deg,
+    rgba(77, 208, 225, 0.22),
+    rgba(255, 213, 79, 0.22),
+    rgba(255, 128, 171, 0.18)
+  );
+  border-color: rgba(77, 208, 225, 0.4);
+  box-shadow:
+    0 10px 30px rgba(77, 208, 225, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+:root[data-tema='spongebob'] .parent-menu {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.97),
+    rgba(255, 251, 224, 0.97)
+  );
+  border-color: rgba(255, 179, 0, 0.4);
+}
+
+:root[data-tema='spongebob'] .parent-menu-item {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(77, 208, 225, 0.2);
+}
+
+:root[data-tema='spongebob'] .parent-menu-item:hover {
+  background: rgba(255, 179, 0, 0.15);
+}
+
+:root[data-tema='spongebob'] .celebration-overlay {
+  background: rgba(227, 247, 250, 0.85);
+}
+
+:root[data-tema='spongebob'] .celebration-modal {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 213, 79, 0.35),
+    rgba(77, 208, 225, 0.28),
+    rgba(255, 128, 171, 0.25)
+  );
+  border-color: rgba(255, 179, 0, 0.5);
+}
+
+:root[data-tema='spongebob'] .celebration-grup {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+:root[data-tema='spongebob'] .celebration-reward {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 213, 79, 0.2)
+  );
+  border-color: rgba(77, 208, 225, 0.4);
+  color: var(--text);
+}
+
+:root[data-tema='spongebob'] .suggest-list {
+  background: #fff;
+  border-color: rgba(77, 208, 225, 0.5);
+}
+
+:root[data-tema='spongebob'] .suggest-hint {
+  background: rgba(77, 208, 225, 0.18);
+  color: var(--text);
+}
+
+:root[data-tema='spongebob'] .suggest-item:hover {
+  background: rgba(255, 179, 0, 0.18);
+}
+
+:root[data-tema='spongebob'] .row-claim,
+:root[data-tema='spongebob'] .row-usul {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+:root[data-tema='spongebob'] .badge-hari {
+  background: linear-gradient(
+    135deg,
+    rgba(77, 208, 225, 0.3),
+    rgba(255, 213, 79, 0.25)
+  );
+  border-color: rgba(77, 208, 225, 0.5);
+}
+
+:root[data-tema='spongebob'] .hadiah-gate {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 179, 0, 0.25),
+    rgba(255, 128, 171, 0.15)
+  );
+  border-color: rgba(255, 179, 0, 0.6);
+}
+
+:root[data-tema='spongebob'] .empty-state,
+:root[data-tema='spongebob'] .meta {
+  color: var(--text-dim);
+}
+
+:root[data-tema='spongebob'] .parent-fab {
+  background: radial-gradient(
+    circle at 30% 30%,
+    #ffd54f,
+    #ffb300 50%,
+    #4dd0e1 100%
+  );
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 10px 30px rgba(255, 179, 0, 0.4),
+    inset -6px -8px 16px rgba(0, 0, 0, 0.2);
+}
+
+:root[data-tema='spongebob'] .upload-tile {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 179, 0, 0.18),
+    rgba(77, 208, 225, 0.12)
+  );
+  border-color: rgba(255, 179, 0, 0.55);
+}
+
+/* Tema spongebob: kontras teks task & reward */
+:root[data-tema='spongebob'] .task-item .judul-teks,
+:root[data-tema='spongebob'] .hadiah-judul,
+:root[data-tema='spongebob'] .row .title-text {
+  color: #1a3d52;
+  font-weight: 800;
+}
+
+:root[data-tema='spongebob'] .row .meta {
+  color: #2c5970;
+  opacity: 1;
+}
+
+:root[data-tema='spongebob'] .hadiah-meta,
+:root[data-tema='spongebob'] .task-item .poin-badge {
+  color: #b85a00;
+  text-shadow: none;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 213, 79, 0.4),
+    rgba(255, 128, 171, 0.2)
+  );
+  border-color: rgba(184, 90, 0, 0.4);
+}
+
+:root[data-tema='spongebob'] .task-item .jam-badge {
+  color: #0a5e7a;
+  background: rgba(77, 208, 225, 0.3);
+}
+
+:root[data-tema='spongebob'] .task-item .status-text.menunggu,
+:root[data-tema='spongebob'] .hadiah-item .status-text.menunggu {
+  color: #b85a00;
+  background: rgba(255, 213, 79, 0.4);
+  border-color: rgba(184, 90, 0, 0.4);
+}
+
+:root[data-tema='spongebob'] .task-item .status-text.disetujui,
+:root[data-tema='spongebob'] .hadiah-item .status-text.disetujui {
+  color: #1d7a3a;
+  background: rgba(77, 201, 122, 0.28);
+  border-color: rgba(29, 122, 58, 0.4);
+}
+
+:root[data-tema='spongebob'] .status-text.locked {
+  color: #2c5970;
+  background: rgba(77, 208, 225, 0.18);
+  border-color: rgba(77, 208, 225, 0.35);
+}
+
+:root[data-tema='spongebob'] .badge-usul {
+  color: #fff;
+  background: linear-gradient(135deg, #ff80ab, #ba68c8);
+}
+
+:root[data-tema='spongebob'] .badge-claim {
+  color: #5a2e00;
+  background: linear-gradient(135deg, #ffd54f, #ffb300);
+}
+
+:root[data-tema='spongebob'] .hadiah-progress-num {
+  color: #b85a00;
+}
+
+/* Dialog override untuk spongebob */
+:root[data-tema='spongebob'] .dialog {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.97),
+    rgba(255, 251, 224, 0.97)
+  );
+  border-color: rgba(255, 179, 0, 0.4);
+}
+
+:root[data-tema='spongebob'] .dialog-danger {
+  background: linear-gradient(
+    135deg,
+    rgba(239, 83, 80, 0.18),
+    rgba(255, 255, 255, 0.95)
+  );
+}
+
+:root[data-tema='spongebob'] .dialog-success {
+  background: linear-gradient(
+    135deg,
+    rgba(77, 201, 122, 0.18),
+    rgba(255, 255, 255, 0.95)
+  );
+}
+
+:root[data-tema='spongebob'] .dialog-info {
+  background: linear-gradient(
+    135deg,
+    rgba(77, 208, 225, 0.22),
+    rgba(255, 255, 255, 0.95)
+  );
+}
+
+:root[data-tema='spongebob'] .row.selectable.selected {
+  background: linear-gradient(
+    135deg,
+    rgba(77, 208, 225, 0.3),
+    rgba(255, 213, 79, 0.18)
+  );
+  border-color: var(--nebula-cyan);
+}
+
+:root[data-tema='spongebob'] .row .row-check {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(77, 208, 225, 0.4);
+}
+
+:root[data-tema='spongebob'] .list-toolbar .select-btn {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(77, 208, 225, 0.3);
+}
+
+/* Tema Ceria: kontras teks task & reward agar mudah dibaca anak */
+:root[data-tema='ceria'] .task-item .judul-teks,
+:root[data-tema='ceria'] .hadiah-judul,
+:root[data-tema='ceria'] .row .title-text {
+  color: #2a1a4a;
+  font-weight: 800;
+}
+
+:root[data-tema='ceria'] .row .meta {
+  color: #4a3d6a;
+  opacity: 1;
+}
+
+:root[data-tema='ceria'] .hadiah-meta,
+:root[data-tema='ceria'] .task-item .poin-badge {
+  color: #c75e0c;
+  text-shadow: none;
+  background: linear-gradient(
+    135deg,
+    rgba(254, 179, 38, 0.35),
+    rgba(232, 77, 138, 0.2)
+  );
+  border-color: rgba(199, 94, 12, 0.4);
+}
+
+:root[data-tema='ceria'] .task-item .jam-badge {
+  color: #1276a8;
+  background: rgba(100, 197, 235, 0.3);
+}
+
+:root[data-tema='ceria'] .task-item .status-text.menunggu,
+:root[data-tema='ceria'] .hadiah-item .status-text.menunggu {
+  color: #b8550e;
+  background: rgba(254, 179, 38, 0.3);
+  border-color: rgba(199, 94, 12, 0.4);
+}
+
+:root[data-tema='ceria'] .task-item .status-text.disetujui,
+:root[data-tema='ceria'] .hadiah-item .status-text.disetujui {
+  color: #1d7a3a;
+  background: rgba(77, 201, 122, 0.28);
+  border-color: rgba(29, 122, 58, 0.4);
+}
+
+:root[data-tema='ceria'] .status-text.locked {
+  color: #4a3d6a;
+  background: rgba(127, 88, 175, 0.12);
+  border-color: rgba(127, 88, 175, 0.25);
+}
+
+:root[data-tema='ceria'] .badge-usul {
+  color: #fff;
+  background: linear-gradient(135deg, #e84d8a, #7f58af);
+}
+
+:root[data-tema='ceria'] .badge-claim {
+  color: #5a2e00;
+  background: linear-gradient(135deg, #feb326, #ff8866);
+}
+
+:root[data-tema='ceria'] .hadiah-progress-num {
+  color: #c75e0c;
 }

@@ -117,6 +117,7 @@ export const TEMA_LABEL: Record<Tema, string> = {
   'bawah-laut': 'Bawah Laut',
   permen: 'Negeri Permen',
   ceria: 'Ceria',
+  spongebob: 'SpongeBob & Patrick',
 }
 
 export const TEMA_IKON: Record<Tema, string> = {
@@ -125,6 +126,7 @@ export const TEMA_IKON: Record<Tema, string> = {
   'bawah-laut': '🐠',
   permen: '🍭',
   ceria: '🌈',
+  spongebob: '🧽',
 }
 
 export const TEMA_HOME_EMOJI: Record<Tema, string> = {
@@ -133,6 +135,7 @@ export const TEMA_HOME_EMOJI: Record<Tema, string> = {
   'bawah-laut': '🐠',
   permen: '🍭',
   ceria: '🦄',
+  spongebob: '🧽',
 }
 
 export const TEMA_HOME_TITLE_KEY: Record<
@@ -142,12 +145,14 @@ export const TEMA_HOME_TITLE_KEY: Record<
   | 'homeTitleBawahLaut'
   | 'homeTitlePermen'
   | 'homeTitleCeria'
+  | 'homeTitleSpongebob'
 > = {
   'luar-angkasa': 'homeTitleLuarAngkasa',
   hutan: 'homeTitleHutan',
   'bawah-laut': 'homeTitleBawahLaut',
   permen: 'homeTitlePermen',
   ceria: 'homeTitleCeria',
+  spongebob: 'homeTitleSpongebob',
 }
 
 export const TEMA_FLOATERS: Record<Tema, string[]> = {
@@ -156,6 +161,7 @@ export const TEMA_FLOATERS: Record<Tema, string[]> = {
   'bawah-laut': ['🐙', '🦀', '🐚', '🐡', '🐳'],
   permen: ['🍩', '🍦', '🍰', '🧁', '🍬'],
   ceria: ['🌈', '🎈', '🎀', '🦄', '🎨'],
+  spongebob: ['🧽', '⭐', '🍍', '🦀', '🦑'],
 }
 
 export const TEMA_OPSI: Tema[] = [
@@ -164,6 +170,7 @@ export const TEMA_OPSI: Tema[] = [
   'bawah-laut',
   'permen',
   'ceria',
+  'spongebob',
 ]
 
 export const REWARD_TIPE_DICT_KEY: Record<

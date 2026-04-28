@@ -17,6 +17,7 @@ const TEMA_LABEL_KEY: Record<Tema, DictKey> = {
   'bawah-laut': 'temaBawahLaut',
   permen: 'temaPermen',
   ceria: 'temaCeria',
+  spongebob: 'temaSpongebob',
 }
 
 type Props = {

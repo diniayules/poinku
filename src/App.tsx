@@ -8,6 +8,7 @@ import { PinGate } from './screens/PinGate'
 import { ParentMode } from './screens/ParentMode'
 import { LangProvider, useT } from './i18n'
 import { DialogProvider } from './components/DialogProvider'
+import { Clock } from './components/Clock'
 import './App.css'
 
 export type ParentTab =
@@ -113,10 +114,13 @@ function Header({ tema }: { tema: AppData['tema'] }) {
   const t = useT()
   return (
     <header className="app-header">
-      <div className="app-title">
-        <span className="rocket">{TEMA_IKON[tema]}</span>
-        <span>{t('appTitle')}</span>
+      <div className="app-title-line">
+        <div className="app-title">
+          <span className="rocket">{TEMA_IKON[tema]}</span>
+          <span>{t('appTitle')}</span>
+        </div>
       </div>
+      <Clock />
     </header>
   )
 }

@@ -78,6 +78,10 @@ export const dict = {
   homeTitleBawahLaut: { id: 'Pilih Penyelam', en: 'Pick Diver' },
   homeTitlePermen: { id: 'Pilih Pencicip', en: 'Pick Taster' },
   homeTitleCeria: { id: 'Pilih Sahabat', en: 'Pick Buddy' },
+  homeTitleSpongebob: {
+    id: 'Pilih Sobat Bikini Bottom',
+    en: 'Pick Bikini Bottom Buddy',
+  },
   parentMode: { id: 'Mode Orang Tua', en: 'Parent Mode' },
   parentModeMenuSub: {
     id: 'Pilih menu — perlu PIN untuk masuk',
@@ -371,6 +375,10 @@ export const dict = {
   temaBawahLaut: { id: 'Bawah Laut', en: 'Underwater' },
   temaPermen: { id: 'Negeri Permen', en: 'Candyland' },
   temaCeria: { id: 'Ceria', en: 'Cheerful' },
+  temaSpongebob: {
+    id: 'SpongeBob & Patrick',
+    en: 'SpongeBob & Patrick',
+  },
 
   // Periode di teks "saat itu"
   periodeHarianLower: { id: 'harian', en: 'daily' },

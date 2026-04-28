@@ -12,22 +12,31 @@
 
 .app-header {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   position: relative;
   flex-shrink: 0;
+  gap: 8px;
 }
 
-.app-header::before,
-.app-header::after {
+.app-title-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+}
+
+.app-title-line::before,
+.app-title-line::after {
   content: '✨';
   font-size: 32px;
   opacity: 0.85;
   animation: sparkle 2.5s ease-in-out infinite;
 }
 
-.app-header::after {
+.app-title-line::after {
   animation-delay: -1.25s;
 }
 
@@ -86,6 +95,48 @@
   50% {
     transform: translateY(-8px) rotate(3deg);
   }
+}
+
+.app-clock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+  user-select: none;
+}
+
+.clock-time {
+  font-family: var(--display);
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  line-height: 1;
+  background: linear-gradient(
+    90deg,
+    var(--nebula-cyan),
+    var(--nebula-purple),
+    var(--nebula-pink)
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbow-shift 5s linear infinite;
+  text-shadow: 0 0 20px rgba(155, 77, 255, 0.25);
+  font-variant-numeric: tabular-nums;
+}
+
+.clock-date {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+  text-transform: capitalize;
+}
+
+:root[data-tema='ceria'] .clock-time {
+  text-shadow: none;
 }
 
 .screen {
@@ -716,9 +767,10 @@
 
 .task-item .judul-teks {
   flex: 1;
-  font-weight: 700;
-  font-size: 18px;
+  font-weight: 800;
+  font-size: 19px;
   min-width: 0;
+  color: var(--text);
 }
 
 .task-item .status-text {
@@ -988,12 +1040,15 @@
 }
 
 .row .title-text {
-  font-weight: 700;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--text);
 }
 
 .row .meta {
-  font-size: 13px;
-  color: var(--text-dim);
+  font-size: 14px;
+  color: var(--text);
+  opacity: 0.85;
 }
 
 .row-actions {
@@ -1205,6 +1260,20 @@
 
 .tema-card.tema-ceria.active {
   border-color: #7f58af;
+}
+
+.tema-card.tema-spongebob {
+  background:
+    radial-gradient(circle at 30% 35%, rgba(255, 213, 79, 0.85), transparent 55%),
+    radial-gradient(circle at 75% 80%, rgba(255, 128, 171, 0.7), transparent 55%),
+    radial-gradient(circle at 50% 100%, rgba(77, 208, 225, 0.7), transparent 55%),
+    linear-gradient(135deg, #fffbe0, #e3f7fa);
+  color: #1a3d52;
+  text-shadow: none;
+}
+
+.tema-card.tema-spongebob.active {
+  border-color: #ffb300;
 }
 
 .tema-ikon {
@@ -1625,14 +1694,16 @@
 }
 
 .hadiah-judul {
-  font-weight: 700;
-  font-size: 16px;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--text);
 }
 
 .hadiah-meta {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--gold);
-  font-weight: 700;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
 .status-text.locked {
@@ -2131,9 +2202,16 @@
   .app-title .rocket {
     font-size: 32px;
   }
-  .app-header::before,
-  .app-header::after {
+  .app-title-line::before,
+  .app-title-line::after {
     font-size: 22px;
+  }
+  .clock-time {
+    font-size: 28px;
+    letter-spacing: 3px;
+  }
+  .clock-date {
+    font-size: 12px;
   }
   .home-grid {
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));

@@ -79,6 +79,7 @@ export type Tema =
   | 'bawah-laut'
   | 'permen'
   | 'ceria'
+  | 'spongebob'
 
 export type Bahasa = 'id' | 'en'
 
